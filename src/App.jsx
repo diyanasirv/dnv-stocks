@@ -314,7 +314,7 @@ export default function App() {
                     {formData.payment_method === 'ONLINE' && (
                       <div className="p-3 bg-light rounded border border-dashed text-center mb-3">
                         <p className="fw-bold small mb-2">Scan QR Code or Copy UPI ID to pay ₹{selectedProduct.price}</p>
-                        <img src={`https://api.qrserver.com/v1/create-qr-code/?size=160x160&data=upi://pay?pa=yourupiid@upi%26am=${selectedProduct.price}`} alt="UPI QR Code" className="mb-2 rounded img-fluid" style={{ maxWidth: '160px' }} />
+                        <img src={`https://api.qrserver.com/v1/create-qr-code/?size=160x160&data=upi://pay?pa=diyanasir01-2@oksbi%26am=${selectedProduct.price}`} alt="UPI QR Code" className="mb-2 rounded img-fluid" style={{ maxWidth: '160px' }} />
                         <div className="mb-2 d-flex justify-content-center align-items-center gap-2">
                           <code className="bg-white px-2 py-1 border rounded small">yourupiid@upi</code>
                           <button type="button" onClick={copyUpiId} className="btn btn-outline-primary btn-sm py-1">Copy</button>

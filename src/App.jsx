@@ -4,18 +4,46 @@ import Admin from './Admin';
 
 const ADMIN_PIN = '5840';
 
-// Mock reviews generator to display 10 reviews per product page
-const REVIEWS_DATA = [
-  { id: 1, name: 'Aarav Sharma', rating: 5, comment: 'Exceptional quality! Exceeded my expectations completely.', date: '2 days ago' },
-  { id: 2, name: 'Priya Patel', rating: 5, comment: 'Super fast delivery and top-notch packaging. Highly recommended!', date: '3 days ago' },
-  { id: 3, name: 'Rohan Mehta', rating: 4, comment: 'Great product for the price. Very satisfied with the overall experience.', date: '5 days ago' },
-  { id: 4, name: 'Sneha Reddy', rating: 5, comment: '10/10 purchase! Will definitely buy from DNV Stocks again.', date: '1 week ago' },
-  { id: 5, name: 'Vikram Singh', rating: 4, comment: 'Good build quality and functional as advertised.', date: '1 week ago' },
-  { id: 6, name: 'Ananya Gupta', rating: 5, comment: 'Absolutely loved it! Worth every single rupee.', date: '2 weeks ago' },
-  { id: 7, name: 'Karan Verma', rating: 4, comment: 'Prompt service and smooth payment process.', date: '2 weeks ago' },
-  { id: 8, name: 'Neha Joshi', rating: 5, comment: 'The product details were accurate. Totally delighted!', date: '3 weeks ago' },
-  { id: 9, name: 'Rahul Das', rating: 5, comment: 'Extremely durable and premium finish. Best in class.', date: '3 weeks ago' },
-  { id: 10, name: 'Pooja Nair', rating: 4, comment: 'Nice product. Arrived securely wrapped without damage.', date: '1 month ago' },
+// Specific reviews for Egg Boiler and 3 Piece Drainer
+const PRODUCT_SPECIFIC_REVIEWS = {
+  egg_boiler: [
+    { id: 'eb-1', name: 'Aarav Sharma', rating: 5, comment: 'Boils 7 eggs perfectly in under 8 minutes! Great time saver for morning breakfasts.', date: '2 days ago' },
+    { id: 'eb-2', name: 'Priya Patel', rating: 5, comment: 'Auto shut-off feature works great. No more cracked eggs or guessing games.', date: '3 days ago' },
+    { id: 'eb-3', name: 'Rohan Mehta', rating: 4, comment: 'Soft, medium, and hard boil modes work as described. Good build quality.', date: '5 days ago' },
+    { id: 'eb-4', name: 'Sneha Reddy', rating: 5, comment: 'Peeling eggs has never been this easy! Shells come off smoothly.', date: '1 week ago' },
+    { id: 'eb-5', name: 'Vikram Singh', rating: 4, comment: 'Compact size, easily fits in small kitchen spaces. Uses very little power.', date: '1 week ago' },
+    { id: 'eb-6', name: 'Ananya Gupta', rating: 5, comment: 'Comes with a measuring cup and piercing pin. Super convenient!', date: '2 weeks ago' },
+    { id: 'eb-7', name: 'Karan Verma', rating: 4, comment: 'Very easy to clean after use. Stainless steel heating plate is good quality.', date: '2 weeks ago' },
+    { id: 'eb-8', name: 'Neha Joshi', rating: 5, comment: 'Excellent product for hostel students and busy professionals.', date: '3 weeks ago' },
+    { id: 'eb-9', name: 'Rahul Das', rating: 5, comment: 'Saves a lot of LPG gas! Highly energy-efficient gadget.', date: '3 weeks ago' },
+    { id: 'eb-10', name: 'Pooja Nair', rating: 4, comment: 'Packaging was neat and item arrived safely. Works like a charm.', date: '1 month ago' }
+  ],
+  drainer: [
+    { id: 'dr-1', name: 'Amitav Roy', rating: 5, comment: 'The 3 different sizes are super practical for washing veggies, rice, and fruits.', date: '1 day ago' },
+    { id: 'dr-2', name: 'Shreya Ghoshal', rating: 5, comment: 'High-quality food-grade plastic. Very sturdy and easy to wash.', date: '3 days ago' },
+    { id: 'dr-3', name: 'Devendra Kumar', rating: 4, comment: 'Drainage holes are well placed. Water drains instantly without spilling rice.', date: '4 days ago' },
+    { id: 'dr-4', name: 'Meera Deshmukh', rating: 5, comment: 'Stackable design saves so much space in my kitchen cabinet.', date: '1 week ago' },
+    { id: 'dr-5', name: 'Siddharth Malhotra', rating: 4, comment: 'Vibrant colors and durable handles. Very useful daily tool.', date: '1 week ago' },
+    { id: 'dr-6', name: 'Kavya Iyer', rating: 5, comment: 'Great for straining pasta and noodles quickly. No mess at all.', date: '2 weeks ago' },
+    { id: 'dr-7', name: 'Arjun Kapoor', rating: 4, comment: 'Good value for money. All 3 pieces are useful sizes.', date: '2 weeks ago' },
+    { id: 'dr-8', name: 'Ritu Saxena', rating: 5, comment: 'Lightweight yet strong. Makes kitchen prep work much faster.', date: '3 weeks ago' },
+    { id: 'dr-9', name: 'Tarun Bhatt', rating: 5, comment: 'Super fast delivery by DNV Stocks. Drainers are top notch!', date: '3 weeks ago' },
+    { id: 'dr-10', name: 'Divya Agarwal', rating: 4, comment: 'Smooth finish with no rough edges. Completely satisfied.', date: '1 month ago' }
+  ]
+};
+
+// Generic fallback reviews for any other added product
+const DEFAULT_REVIEWS = [
+  { id: 'gen-1', name: 'Rajesh Sharma', rating: 5, comment: 'Excellent product! Exceeded my expectations completely.', date: '2 days ago' },
+  { id: 'gen-2', name: 'Suman Lata', rating: 5, comment: 'Fast delivery and premium packaging. Highly recommended!', date: '3 days ago' },
+  { id: 'gen-3', name: 'Alok Gupta', rating: 4, comment: 'Great value for money. Very satisfied with the purchase.', date: '5 days ago' },
+  { id: 'gen-4', name: 'Preeti Sun', rating: 5, comment: 'Top quality product! Will definitely buy again.', date: '1 week ago' },
+  { id: 'gen-5', name: 'Manoj Bajpayee', rating: 4, comment: 'Good build quality and works exactly as described.', date: '1 week ago' },
+  { id: 'gen-6', name: 'Sunita Menon', rating: 5, comment: 'Loved it! Extremely useful and easy to operate.', date: '2 weeks ago' },
+  { id: 'gen-7', name: 'Vijay Anand', rating: 4, comment: 'Prompt delivery and smooth checkout process.', date: '2 weeks ago' },
+  { id: 'gen-8', name: 'Geeta Rani', rating: 5, comment: 'Item arrived safely wrapped without damage.', date: '3 weeks ago' },
+  { id: 'gen-9', name: 'Sandeep Khurana', rating: 5, comment: 'Superb quality! Worth every single rupee spent.', date: '3 weeks ago' },
+  { id: 'gen-10', name: 'Ankita Lokhande', rating: 4, comment: 'Nice product quality. Fits my everyday needs well.', date: '1 month ago' }
 ];
 
 export default function App() {
@@ -37,7 +65,7 @@ export default function App() {
     phone: '',
     address: '',
     pincode: '',
-    payment_method: 'ONLINE', // Default to ONLINE
+    payment_method: 'ONLINE',
     transaction_id: ''
   });
 
@@ -111,7 +139,6 @@ export default function App() {
     return 'DNV-' + Math.floor(100000 + Math.random() * 900000);
   };
 
-  // Compute final price depending on payment selection
   const getFinalPrice = () => {
     if (!selectedProduct) return 0;
     const basePrice = Number(selectedProduct.price) || 0;
@@ -202,6 +229,22 @@ export default function App() {
     window.history.pushState({}, '', '/');
     setActiveTab('shop');
   };
+
+  // Select the specific review list depending on product name
+  const getReviewsForProduct = (product) => {
+    if (!product) return [];
+    const name = (product.name || '').toLowerCase();
+
+    if (name.includes('egg') || name.includes('boiler')) {
+      return PRODUCT_SPECIFIC_REVIEWS.egg_boiler;
+    }
+    if (name.includes('drain') || name.includes('strainer') || name.includes('3 piece')) {
+      return PRODUCT_SPECIFIC_REVIEWS.drainer;
+    }
+    return DEFAULT_REVIEWS;
+  };
+
+  const currentReviews = selectedProduct ? getReviewsForProduct(selectedProduct) : [];
 
   return (
     <div className="bg-light min-vh-100 pb-5">
@@ -316,7 +359,7 @@ export default function App() {
                   
                   <div className="d-flex align-items-center gap-2 mb-3">
                     <span className="badge bg-success fs-6 py-1 px-2">4.8 ★</span>
-                    <span className="text-muted small font-weight-semibold">10 Ratings & Reviews</span>
+                    <span className="text-muted small font-weight-semibold">10 Verified Reviews</span>
                   </div>
 
                   <div className="mb-3">
@@ -334,11 +377,11 @@ export default function App() {
 
                   <hr className="my-4" />
 
-                  {/* REVIEWS & RATINGS SECTION */}
+                  {/* PRODUCT SPECIFIC REVIEWS */}
                   <div>
-                    <h5 className="fw-bold mb-3">Customer Reviews (10)</h5>
+                    <h5 className="fw-bold mb-3">Customer Reviews for {selectedProduct.name}</h5>
                     <div className="d-flex flex-column gap-3">
-                      {REVIEWS_DATA.map((rev) => (
+                      {currentReviews.map((rev) => (
                         <div key={rev.id} className="p-3 bg-light rounded border">
                           <div className="d-flex justify-content-between align-items-center mb-1">
                             <strong className="small">{rev.name}</strong>
@@ -394,7 +437,7 @@ export default function App() {
 
                     <h6 className="fw-bold text-uppercase text-muted small mb-2">Payment Method</h6>
                     
-                    {/* ONLINE PAYMENT OPTION FIRST */}
+                    {/* ONLINE PAYMENT FIRST */}
                     <div className="card p-2 mb-2 border">
                       <div className="form-check">
                         <input className="form-check-input" type="radio" name="payment_method" id="online" value="ONLINE" checked={formData.payment_method === 'ONLINE'} onChange={handleInputChange} />
@@ -404,7 +447,7 @@ export default function App() {
                       </div>
                     </div>
 
-                    {/* CASH ON DELIVERY OPTION SECOND WITH +₹10 NOTICE */}
+                    {/* CASH ON DELIVERY SECOND WITH +₹10 NOTICE */}
                     <div className="card p-2 mb-3 border">
                       <div className="form-check">
                         <input className="form-check-input" type="radio" name="payment_method" id="cod" value="COD" checked={formData.payment_method === 'COD'} onChange={handleInputChange} />

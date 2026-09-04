@@ -4,11 +4,26 @@ import Admin from './Admin';
 
 const ADMIN_PIN = '5840';
 
+// Mock reviews generator to display 10 reviews per product page
+const REVIEWS_DATA = [
+  { id: 1, name: 'Aarav Sharma', rating: 5, comment: 'Exceptional quality! Exceeded my expectations completely.', date: '2 days ago' },
+  { id: 2, name: 'Priya Patel', rating: 5, comment: 'Super fast delivery and top-notch packaging. Highly recommended!', date: '3 days ago' },
+  { id: 3, name: 'Rohan Mehta', rating: 4, comment: 'Great product for the price. Very satisfied with the overall experience.', date: '5 days ago' },
+  { id: 4, name: 'Sneha Reddy', rating: 5, comment: '10/10 purchase! Will definitely buy from DNV Stocks again.', date: '1 week ago' },
+  { id: 5, name: 'Vikram Singh', rating: 4, comment: 'Good build quality and functional as advertised.', date: '1 week ago' },
+  { id: 6, name: 'Ananya Gupta', rating: 5, comment: 'Absolutely loved it! Worth every single rupee.', date: '2 weeks ago' },
+  { id: 7, name: 'Karan Verma', rating: 4, comment: 'Prompt service and smooth payment process.', date: '2 weeks ago' },
+  { id: 8, name: 'Neha Joshi', rating: 5, comment: 'The product details were accurate. Totally delighted!', date: '3 weeks ago' },
+  { id: 9, name: 'Rahul Das', rating: 5, comment: 'Extremely durable and premium finish. Best in class.', date: '3 weeks ago' },
+  { id: 10, name: 'Pooja Nair', rating: 4, comment: 'Nice product. Arrived securely wrapped without damage.', date: '1 month ago' },
+];
+
 export default function App() {
   const [activeTab, setActiveTab] = useState('shop');
   const [products, setProducts] = useState([]);
   const [loadingProducts, setLoadingProducts] = useState(true);
   const [selectedProduct, setSelectedProduct] = useState(null);
+  const [isCheckout, setIsCheckout] = useState(false);
 
   // Admin Auth States
   const [isAdminAuthenticated, setIsAdminAuthenticated] = useState(false);
@@ -22,7 +37,7 @@ export default function App() {
     phone: '',
     address: '',
     pincode: '',
-    payment_method: 'COD',
+    payment_method: 'ONLINE', // Default to ONLINE
     transaction_id: ''
   });
 
@@ -96,6 +111,13 @@ export default function App() {
     return 'DNV-' + Math.floor(100000 + Math.random() * 900000);
   };
 
+  // Compute final price depending on payment selection
+  const getFinalPrice = () => {
+    if (!selectedProduct) return 0;
+    const basePrice = Number(selectedProduct.price) || 0;
+    return formData.payment_method === 'COD' ? basePrice + 10 : basePrice;
+  };
+
   const handleOrderSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
@@ -107,6 +129,7 @@ export default function App() {
     }
 
     const newOrderId = generateOrderId();
+    const finalAmount = getFinalPrice();
 
     const { error } = await supabase.from('orders').insert([
       {
@@ -118,7 +141,8 @@ export default function App() {
         pincode: formData.pincode,
         payment_method: formData.payment_method,
         transaction_id: formData.payment_method === 'ONLINE' ? formData.transaction_id : null,
-        order_status: 'Processing'
+        order_status: 'Processing',
+        amount: finalAmount
       }
     ]);
 
@@ -129,6 +153,7 @@ export default function App() {
     } else {
       setPlacedOrderId(newOrderId);
       setSelectedProduct(null);
+      setIsCheckout(false);
     }
   };
 
@@ -157,7 +182,7 @@ export default function App() {
   };
 
   const copyUpiId = () => {
-    navigator.clipboard.writeText('yourupiid@upi');
+    navigator.clipboard.writeText('diyanasir01-2@oksbi');
     alert('UPI ID copied to clipboard!');
   };
 
@@ -187,7 +212,7 @@ export default function App() {
           <div className="btn-group" role="group">
             <button 
               className={`btn btn-sm ${activeTab === 'shop' ? 'btn-primary fw-bold' : 'btn-outline-primary'}`} 
-              onClick={() => { setActiveTab('shop'); setPlacedOrderId(null); fetchProducts(); window.history.pushState({}, '', '/'); }}>
+              onClick={() => { setActiveTab('shop'); setPlacedOrderId(null); setSelectedProduct(null); setIsCheckout(false); fetchProducts(); window.history.pushState({}, '', '/'); }}>
               Shop
             </button>
             <button 
@@ -223,6 +248,7 @@ export default function App() {
                 </div>
               </div>
             ) : !selectedProduct ? (
+              /* PRODUCT LIST VIEW */
               <div>
                 {loadingProducts ? (
                   <div className="text-center py-5">
@@ -236,7 +262,12 @@ export default function App() {
                 ) : (
                   <div className="d-flex flex-column gap-3">
                     {products.map((prod) => (
-                      <div key={prod.id} className="card shadow-sm border-0 rounded-3 overflow-hidden">
+                      <div 
+                        key={prod.id} 
+                        className="card shadow-sm border-0 rounded-3 overflow-hidden"
+                        style={{ cursor: 'pointer' }}
+                        onClick={() => setSelectedProduct(prod)}
+                      >
                         <img 
                           src={prod.image || 'https://via.placeholder.com/300'} 
                           className="card-img-top object-fit-cover" 
@@ -245,13 +276,17 @@ export default function App() {
                         />
                         <div className="card-body p-3">
                           <h5 className="card-title fw-bold fs-5 mb-1">{prod.name}</h5>
+                          <div className="d-flex align-items-center gap-1 mb-2">
+                            <span className="text-warning fw-bold fs-6">★ 4.8</span>
+                            <span className="text-muted small">(10 reviews)</span>
+                          </div>
                           <p className="card-text text-muted small mb-3">{prod.description}</p>
                           <div className="d-flex justify-content-between align-items-center">
                             <span className="fs-3 fw-bold text-danger">₹{prod.price}</span>
                             <button 
-                              onClick={() => setSelectedProduct(prod)} 
-                              className="btn btn-success fw-bold px-4 py-2 fs-6">
-                              Buy Now
+                              onClick={(e) => { e.stopPropagation(); setSelectedProduct(prod); }} 
+                              className="btn btn-primary fw-bold px-4 py-2 fs-6">
+                              View Details
                             </button>
                           </div>
                         </div>
@@ -260,13 +295,73 @@ export default function App() {
                   </div>
                 )}
               </div>
-            ) : (
+            ) : !isCheckout ? (
+              /* SEPARATE PRODUCT PAGE VIEW */
               <div className="card shadow-sm border-0 rounded-3">
                 <div className="card-body p-3">
                   <button 
                     onClick={() => setSelectedProduct(null)} 
                     className="btn btn-light btn-sm fw-semibold mb-3 border w-100 py-2">
                     ← Back to Products
+                  </button>
+
+                  <img 
+                    src={selectedProduct.image || 'https://via.placeholder.com/300'} 
+                    alt={selectedProduct.name} 
+                    className="w-100 rounded-3 object-fit-cover mb-3" 
+                    style={{ maxHeight: '300px' }} 
+                  />
+
+                  <h4 className="fw-bold fs-4 mb-1">{selectedProduct.name}</h4>
+                  
+                  <div className="d-flex align-items-center gap-2 mb-3">
+                    <span className="badge bg-success fs-6 py-1 px-2">4.8 ★</span>
+                    <span className="text-muted small font-weight-semibold">10 Ratings & Reviews</span>
+                  </div>
+
+                  <div className="mb-3">
+                    <span className="fs-2 fw-bold text-danger me-2">₹{selectedProduct.price}</span>
+                    <span className="badge bg-light text-success border border-success">In Stock</span>
+                  </div>
+
+                  <p className="text-secondary mb-4">{selectedProduct.description}</p>
+
+                  <button 
+                    onClick={() => setIsCheckout(true)} 
+                    className="btn btn-success w-100 py-3 fw-bold fs-5 shadow-sm mb-4">
+                    Buy Now
+                  </button>
+
+                  <hr className="my-4" />
+
+                  {/* REVIEWS & RATINGS SECTION */}
+                  <div>
+                    <h5 className="fw-bold mb-3">Customer Reviews (10)</h5>
+                    <div className="d-flex flex-column gap-3">
+                      {REVIEWS_DATA.map((rev) => (
+                        <div key={rev.id} className="p-3 bg-light rounded border">
+                          <div className="d-flex justify-content-between align-items-center mb-1">
+                            <strong className="small">{rev.name}</strong>
+                            <span className="text-muted fs-7">{rev.date}</span>
+                          </div>
+                          <div className="text-warning small mb-1">
+                            {'★'.repeat(rev.rating)}{'☆'.repeat(5 - rev.rating)}
+                          </div>
+                          <p className="m-0 text-dark small">{rev.comment}</p>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            ) : (
+              /* CHECKOUT FORM VIEW */
+              <div className="card shadow-sm border-0 rounded-3">
+                <div className="card-body p-3">
+                  <button 
+                    onClick={() => setIsCheckout(false)} 
+                    className="btn btn-light btn-sm fw-semibold mb-3 border w-100 py-2">
+                    ← Back to Product Details
                   </button>
 
                   <div className="d-flex align-items-center gap-3 p-2 bg-light rounded mb-3 border">
@@ -278,7 +373,7 @@ export default function App() {
                     />
                     <div>
                       <h6 className="mb-0 fw-bold">{selectedProduct.name}</h6>
-                      <span className="fs-5 text-danger fw-bold">₹{selectedProduct.price}</span>
+                      <span className="fs-5 text-danger fw-bold">Total: ₹{getFinalPrice()}</span>
                     </div>
                   </div>
 
@@ -298,25 +393,40 @@ export default function App() {
                     </div>
 
                     <h6 className="fw-bold text-uppercase text-muted small mb-2">Payment Method</h6>
+                    
+                    {/* ONLINE PAYMENT OPTION FIRST */}
                     <div className="card p-2 mb-2 border">
                       <div className="form-check">
-                        <input className="form-check-input" type="radio" name="payment_method" id="cod" value="COD" checked={formData.payment_method === 'COD'} onChange={handleInputChange} />
-                        <label className="form-check-label fw-semibold" htmlFor="cod">Cash on Delivery (COD)</label>
-                      </div>
-                    </div>
-                    <div className="card p-2 mb-3 border">
-                      <div className="form-check">
                         <input className="form-check-input" type="radio" name="payment_method" id="online" value="ONLINE" checked={formData.payment_method === 'ONLINE'} onChange={handleInputChange} />
-                        <label className="form-check-label fw-semibold" htmlFor="online">Online Payment (UPI / QR Code)</label>
+                        <label className="form-check-label fw-semibold" htmlFor="online">
+                          Online Payment (UPI / QR Code)
+                        </label>
                       </div>
                     </div>
 
+                    {/* CASH ON DELIVERY OPTION SECOND WITH +₹10 NOTICE */}
+                    <div className="card p-2 mb-3 border">
+                      <div className="form-check">
+                        <input className="form-check-input" type="radio" name="payment_method" id="cod" value="COD" checked={formData.payment_method === 'COD'} onChange={handleInputChange} />
+                        <label className="form-check-label fw-semibold d-flex justify-content-between align-items-center" htmlFor="cod">
+                          <span>Cash on Delivery (COD)</span>
+                          <span className="badge bg-warning text-dark small">+₹10 Charge</span>
+                        </label>
+                      </div>
+                    </div>
+
+                    {formData.payment_method === 'COD' && (
+                      <div className="alert alert-info py-2 small mb-3">
+                        ℹ️ <strong>Note:</strong> ₹10 cash-on-delivery handling charge has been added to your total.
+                      </div>
+                    )}
+
                     {formData.payment_method === 'ONLINE' && (
                       <div className="p-3 bg-light rounded border border-dashed text-center mb-3">
-                        <p className="fw-bold small mb-2">Scan QR Code or Copy UPI ID to pay ₹{selectedProduct.price}</p>
-                        <img src={`https://api.qrserver.com/v1/create-qr-code/?size=160x160&data=upi://pay?pa=diyanasir01-2@oksbi%26am=${selectedProduct.price}`} alt="UPI QR Code" className="mb-2 rounded img-fluid" style={{ maxWidth: '160px' }} />
+                        <p className="fw-bold small mb-2">Scan QR Code or Copy UPI ID to pay ₹{getFinalPrice()}</p>
+                        <img src={`https://api.qrserver.com/v1/create-qr-code/?size=160x160&data=upi://pay?pa=diyanasir01-2@oksbi%26am=${getFinalPrice()}`} alt="UPI QR Code" className="mb-2 rounded img-fluid" style={{ maxWidth: '160px' }} />
                         <div className="mb-2 d-flex justify-content-center align-items-center gap-2">
-                          <code className="bg-white px-2 py-1 border rounded small">yourupiid@upi</code>
+                          <code className="bg-white px-2 py-1 border rounded small">diyanasir01-2@oksbi</code>
                           <button type="button" onClick={copyUpiId} className="btn btn-outline-primary btn-sm py-1">Copy</button>
                         </div>
                         <input type="text" name="transaction_id" className="form-control form-control-lg fs-6" placeholder="Enter UTR / Transaction ID" value={formData.transaction_id} onChange={handleInputChange} />
@@ -324,7 +434,7 @@ export default function App() {
                     )}
 
                     <button type="submit" disabled={loading} className="btn btn-success w-100 py-3 fw-bold fs-5 shadow-sm">
-                      {loading ? 'Placing Order...' : `Confirm Order (₹${selectedProduct.price})`}
+                      {loading ? 'Placing Order...' : `Confirm Order (₹${getFinalPrice()})`}
                     </button>
                   </form>
                 </div>
@@ -369,6 +479,11 @@ export default function App() {
                     <div className="p-2 bg-white rounded border">
                       <strong>Item:</strong> {trackedOrder.product_name || 'N/A'}
                     </div>
+                    {trackedOrder.amount && (
+                      <div className="p-2 bg-white rounded border">
+                        <strong>Total Amount:</strong> ₹{trackedOrder.amount}
+                      </div>
+                    )}
                     <div className="p-2 bg-white rounded border d-flex justify-content-between align-items-center">
                       <strong>Status:</strong> 
                       <span className={`badge text-uppercase fs-6 ${

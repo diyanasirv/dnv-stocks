@@ -7,7 +7,7 @@ const ADMIN_PIN = '5840';
 // Specific reviews for Egg Boiler and 3 Piece Drainer
 const PRODUCT_SPECIFIC_REVIEWS = {
   egg_boiler: [
-        { id: 'eb-11', name: 'Muhammed Shamil', rating: 5, comment: 'Works great.', date: 'Today' },
+    { id: 'eb-11', name: 'Muhammed Shamil', rating: 5, comment: 'Works great.', date: 'Today' },
     { id: 'eb-12', name: 'Fathima Rihana', rating: 5, comment: 'Hostelil use cheyyan super convenient aanu.', date: 'Today' },
     { id: 'eb-13', name: 'Arjun Nair', rating: 4, comment: 'Small and useful. Fits nicely in my kitchen.', date: 'Today' },
     { id: 'eb-14', name: 'Aiswarya Menon', rating: 5, comment: 'I used it this morning and the eggs came out perfectly. Much easier than using a vessel.', date: 'Today' },
@@ -15,7 +15,6 @@ const PRODUCT_SPECIFIC_REVIEWS = {
     { id: 'eb-16', name: 'Sreedevi Krishnan', rating: 5, comment: 'Soft boil setting is really good. Exactly the way I like my eggs.', date: 'Today' },
     { id: 'eb-17', name: 'Vishnu Prasad', rating: 4, comment: 'Simple to use and does the job well.', date: 'Today' },
     { id: 'eb-18', name: 'Hiba Fathima', rating: 5, comment: 'Roomil vechu egg boil cheyyan ithu valare helpful aanu.', date: 'Today' },
-
     { id: 'eb-19', name: 'Rakesh Kumar', rating: 5, comment: 'Seven eggs at once is perfect for our family breakfast.', date: '1 day ago' },
     { id: 'eb-20', name: 'Meera Suresh', rating: 4, comment: 'Good one.', date: '1 day ago' },
     { id: 'eb-21', name: 'Abdul Rahman', rating: 5, comment: 'First use was enough to convince me. No cracked eggs and everything cooked evenly.', date: '1 day ago' },
@@ -30,7 +29,6 @@ const PRODUCT_SPECIFIC_REVIEWS = {
     { id: 'eb-30', name: 'Liya Jose', rating: 5, comment: 'Hostel studentsinu definitely recommend cheyyum.', date: '1 day ago' },
     { id: 'eb-31', name: 'Midhun K', rating: 5, comment: 'Timer nokki nilkkenda avashyam illa. Switch on cheythal pinne vere pani nokkam.', date: '1 day ago' },
     { id: 'eb-32', name: 'Greeshma Ravi', rating: 4, comment: 'So far, no issues.', date: '1 day ago' },
-
     { id: 'eb-33', name: 'Junaid P', rating: 5, comment: 'Auto shut-off works perfectly.', date: '2 days ago' },
     { id: 'eb-34', name: 'Athira S', rating: 5, comment: 'Measuring cup makes things easier. Just follow the level and switch it on.', date: '2 days ago' },
     { id: 'eb-35', name: 'Rahul Menon', rating: 4, comment: 'For someone living alone, this is much more convenient than boiling two eggs in a saucepan.', date: '2 days ago' },
@@ -47,7 +45,6 @@ const PRODUCT_SPECIFIC_REVIEWS = {
     { id: 'eb-46', name: 'Nimisha Paul', rating: 5, comment: 'My kids like boiled eggs, so this has become a regular kitchen item for us.', date: '2 days ago' },
     { id: 'eb-47', name: 'Faisal K', rating: 5, comment: 'Gas stove use cheyyathe eggs prepare cheyyan pattunnathu convenient aanu.', date: '2 days ago' },
     { id: 'eb-48', name: 'Reshma Pradeep', rating: 4, comment: 'Easy storage and easy cleaning.', date: '2 days ago' },
-
     { id: 'eb-49', name: 'Naveen Thomas', rating: 5, comment: 'I use it almost every morning. Very reliable so far.', date: '3 days ago' },
     { id: 'eb-50', name: 'Mariya Jose', rating: 5, comment: 'Morning breakfast prepare cheyyan nalla help aanu.', date: '3 days ago' },
     { id: 'eb-51', name: 'Sreehari P', rating: 4, comment: 'Worth the money.', date: '3 days ago' },
@@ -63,7 +60,6 @@ const PRODUCT_SPECIFIC_REVIEWS = {
     { id: 'eb-61', name: 'Kavya Menon', rating: 5, comment: 'Cleaning is much easier than I expected.', date: '3 days ago' },
     { id: 'eb-62', name: 'Suraj S', rating: 5, comment: 'Quick breakfast without using the stove.', date: '3 days ago' },
     { id: 'eb-63', name: 'Amina Latheef', rating: 4, comment: 'It fits nicely even in my small apartment kitchen.', date: '3 days ago' },
-
     { id: 'eb-64', name: 'Jithin Raj', rating: 5, comment: 'Time save cheyyunnathu thanne biggest advantage.', date: '4 days ago' },
     { id: 'eb-65', name: 'Swathi Krishna', rating: 5, comment: 'Water measurement correct aayal result consistent aanu.', date: '4 days ago' },
     { id: 'eb-66', name: 'Afsal P', rating: 4, comment: 'The stainless steel plate is easy to maintain.', date: '4 days ago' },
@@ -77,7 +73,6 @@ const PRODUCT_SPECIFIC_REVIEWS = {
     { id: 'eb-74', name: 'Siddharth Nair', rating: 5, comment: 'The automatic function is the main reason I prefer this over normal boiling.', date: '4 days ago' },
     { id: 'eb-75', name: 'Roshni Thomas', rating: 4, comment: 'Compact and lightweight.', date: '4 days ago' },
     { id: 'eb-76', name: 'Muhammed Riyas', rating: 5, comment: 'Bachelorsinu nalla option aanu. Breakfast easy aayi.', date: '4 days ago' },
-
     { id: 'eb-77', name: 'Sowmya K', rating: 5, comment: 'Every egg was cooked evenly.', date: '5 days ago' },
     { id: 'eb-78', name: 'Pranav Suresh', rating: 4, comment: 'No complicated setup, which I liked.', date: '5 days ago' },
     { id: 'eb-79', name: 'Aysha N', rating: 5, comment: 'The little egg pin is actually useful. I did not expect to use it this much.', date: '5 days ago' },
@@ -91,7 +86,6 @@ const PRODUCT_SPECIFIC_REVIEWS = {
     { id: 'eb-87', name: 'Nivetha R', rating: 5, comment: 'Romba easy ah use panna mudiyuthu. Cleaning is also simple.', date: '5 days ago' },
     { id: 'eb-88', name: 'Vignesh P', rating: 4, comment: 'Small but useful appliance.', date: '5 days ago' },
     { id: 'eb-89', name: 'Keerthana S', rating: 5, comment: 'I bought it mainly for breakfast and now I use it almost every day.', date: '5 days ago' },
-
     { id: 'eb-90', name: 'Mahalakshmi K', rating: 5, comment: 'Different settings are useful because everyone at home prefers eggs differently.', date: '6 days ago' },
     { id: 'eb-91', name: 'Praveen Raj', rating: 4, comment: 'Works as expected.', date: '6 days ago' },
     { id: 'eb-92', name: 'Divya Sri', rating: 5, comment: 'Romba useful. Morning preparation quick ah mudinjiduthu.', date: '6 days ago' },
@@ -104,7 +98,6 @@ const PRODUCT_SPECIFIC_REVIEWS = {
     { id: 'eb-99', name: 'Manoj Kumar', rating: 5, comment: 'Romba useful for busy mornings.', date: '6 days ago' },
     { id: 'eb-100', name: 'Anitha S', rating: 4, comment: 'Nice little boiler.', date: '6 days ago' },
     { id: 'eb-101', name: 'Suresh Menon', rating: 5, comment: 'Bought this for my daughter who stays in a hostel. She says it is very easy to use.', date: '6 days ago' },
-
     { id: 'eb-102', name: 'Nandini P', rating: 5, comment: 'Consistent results every time.', date: '1 week ago' },
     { id: 'eb-103', name: 'Riyas Mohammed', rating: 4, comment: 'Use cheyyan simple aanu. Cleaningum easy.', date: '1 week ago' },
     { id: 'eb-104', name: 'Gopika Raj', rating: 5, comment: 'Meal prep cheyyumbol ithu nalla time save cheyyunnu.', date: '1 week ago' },
@@ -114,7 +107,6 @@ const PRODUCT_SPECIFIC_REVIEWS = {
     { id: 'eb-108', name: 'Fazna Fathima', rating: 5, comment: 'College daysil breakfast prepare cheyyan ithu really helpful aanu.', date: '1 week ago' },
     { id: 'eb-109', name: 'Rohit Kumar', rating: 4, comment: 'Reasonable price and good performance.', date: '1 week ago' },
     { id: 'eb-110', name: 'Lekshmi S', rating: 5, comment: 'No need to keep checking the pot anymore.', date: '1 week ago' },
-
     { id: 'eb-111', name: 'Midhun Raj', rating: 5, comment: 'Piercing pin is useful for avoiding cracks.', date: '2 weeks ago' },
     { id: 'eb-112', name: 'Aparna N', rating: 4, comment: 'Good for a small family. The capacity is enough for us.', date: '2 weeks ago' },
     { id: 'eb-113', name: 'Shameena K', rating: 5, comment: 'Daily use cheyyunnu and so far reliable aanu.', date: '2 weeks ago' },
@@ -123,13 +115,11 @@ const PRODUCT_SPECIFIC_REVIEWS = {
     { id: 'eb-116', name: 'Ameen K', rating: 5, comment: 'Stove use kuranju. Egg preparationinu easy option aanu.', date: '2 weeks ago' },
     { id: 'eb-117', name: 'Anusha P', rating: 5, comment: 'Very little effort needed.', date: '2 weeks ago' },
     { id: 'eb-118', name: 'Firoz Ahmed', rating: 4, comment: 'Works well and does not require much maintenance.', date: '2 weeks ago' },
-
     { id: 'eb-119', name: 'Riya Thomas', rating: 5, comment: 'Really useful kitchen gadget.', date: '3 weeks ago' },
     { id: 'eb-120', name: 'Abdul Hadi', rating: 5, comment: 'Hostelil use cheyyan best. Small and easy to handle.', date: '3 weeks ago' },
     { id: 'eb-121', name: 'Sanjay Kumar', rating: 4, comment: 'Good performance and compact design.', date: '3 weeks ago' },
     { id: 'eb-122', name: 'Radhika S', rating: 5, comment: 'Auto shut-off makes it much easier to use than a normal pot.', date: '3 weeks ago' },
     { id: 'eb-123', name: 'Naseer P', rating: 5, comment: 'Gas stoveil pan use cheyyunnathinekkal simple aanu.', date: '3 weeks ago' },
-
     { id: 'eb-124', name: 'Ananya Raj', rating: 4, comment: 'Good for regular breakfast use.', date: '1 month ago' },
     { id: 'eb-125', name: 'Shabna Latheef', rating: 5, comment: 'Cleaning takes only a few minutes. Still looks good after regular use.', date: '1 month ago' },
     { id: 'eb-126', name: 'Vivek Nair', rating: 5, comment: 'I mostly use the hard boil option and it has been working nicely.', date: '1 month ago' },
@@ -145,15 +135,15 @@ const PRODUCT_SPECIFIC_REVIEWS = {
     { id: 'eb-136', name: 'Vimal Kumar', rating: 4, comment: 'Good option for bachelors.', date: '1 month ago' },
     { id: 'eb-137', name: 'Akhila Raj', rating: 5, comment: 'Automatic function is my favourite part. Makes the whole process almost effortless.', date: '1 month ago' },
     { id: 'eb-138', name: 'Jaseem P', rating: 5, comment: 'Price-wise it is worth considering if you eat eggs regularly.', date: '1 month ago' },
-    { id: 'eb-139', name: 'Maya Krishnan', rating: 5, comment: 'I have tried boiling eggs in a pan, pressure cooker and now this. For everyday use, this is definitely the easiest method for me.', date: '1 month ago' }],
+    { id: 'eb-139', name: 'Maya Krishnan', rating: 5, comment: 'I have tried boiling eggs in a pan, pressure cooker and now this. For everyday use, this is definitely the easiest method for me.', date: '1 month ago' }
+  ],
   drainer: [
-        { id: 'dr-11', name: 'Muhammed Riyas', rating: 5, comment: 'Kitchenil daily use cheyyunnu. Very handy.', date: 'Today' },
+    { id: 'dr-11', name: 'Muhammed Riyas', rating: 5, comment: 'Kitchenil daily use cheyyunnu. Very handy.', date: 'Today' },
     { id: 'dr-12', name: 'Anjali Nair', rating: 5, comment: 'Three sizes kittunnathu kond different things wash cheyyan easy aanu.', date: 'Today' },
     { id: 'dr-13', name: 'Karthik S', rating: 4, comment: 'Useful set for the kitchen.', date: 'Today' },
     { id: 'dr-14', name: 'Fathima Shirin', rating: 5, comment: 'Vegetables wash cheythu drain cheyyan nalla convenient aanu. Cabinetilum space kurachu mathi.', date: 'Today' },
     { id: 'dr-15', name: 'Arun Raj', rating: 5, comment: 'Rice washinginu especially useful.', date: 'Today' },
     { id: 'dr-16', name: 'Meenakshi R', rating: 4, comment: 'Three pieces are actually useful, not just extra pieces.', date: 'Today' },
-
     { id: 'dr-17', name: 'Nikhil Menon', rating: 5, comment: 'Size options are perfect for different quantities.', date: '1 day ago' },
     { id: 'dr-18', name: 'Shahana P', rating: 5, comment: 'Lightweight aanu, handle cheyyanum easy.', date: '1 day ago' },
     { id: 'dr-19', name: 'Vignesh Kumar', rating: 5, comment: 'Romba useful kitchen item. Fruits wash panna super ah irukku.', date: '1 day ago' },
@@ -163,7 +153,6 @@ const PRODUCT_SPECIFIC_REVIEWS = {
     { id: 'dr-23', name: 'Sanjay Nair', rating: 4, comment: 'Easy to clean and store.', date: '1 day ago' },
     { id: 'dr-24', name: 'Hiba Fathima', rating: 5, comment: 'Hostel kitchenil use cheyyan convenient aanu.', date: '1 day ago' },
     { id: 'dr-25', name: 'Priyanka Devi', rating: 5, comment: 'Pasta drain cheyyumbol water quickly pokunnu. No problem so far.', date: '1 day ago' },
-
     { id: 'dr-26', name: 'Rahul Das', rating: 4, comment: 'Nice set. All three sizes have different uses.', date: '2 days ago' },
     { id: 'dr-27', name: 'Sreedevi Krishnan', rating: 5, comment: 'Vegetables wash cheyyan njan mostly use cheyyunnu. Very comfortable.', date: '2 days ago' },
     { id: 'dr-28', name: 'Abdul Hadi', rating: 5, comment: 'The plastic feels reasonably thick and does not bend easily.', date: '2 days ago' },
@@ -174,7 +163,6 @@ const PRODUCT_SPECIFIC_REVIEWS = {
     { id: 'dr-33', name: 'Nivetha S', rating: 5, comment: 'Kitchen use-ku romba practical ah irukku.', date: '2 days ago' },
     { id: 'dr-34', name: 'Gopika Raj', rating: 4, comment: 'Simple product but very useful.', date: '2 days ago' },
     { id: 'dr-35', name: 'Vishnu Prasad', rating: 5, comment: 'After washing rice, the excess water comes out quickly. That is the main thing I wanted.', date: '2 days ago' },
-
     { id: 'dr-36', name: 'Aiswarya Menon', rating: 5, comment: 'Three different sizes make this set much more useful than buying one drainer.', date: '3 days ago' },
     { id: 'dr-37', name: 'Faisal P', rating: 4, comment: 'Light and easy to handle.', date: '3 days ago' },
     { id: 'dr-38', name: 'Harini M', rating: 5, comment: 'Fruits wash cheythu fridgeil vekkan ithu use cheyyunnu.', date: '3 days ago' },
@@ -185,7 +173,6 @@ const PRODUCT_SPECIFIC_REVIEWS = {
     { id: 'dr-43', name: 'Balaji R', rating: 4, comment: 'Useful for noodles and pasta too.', date: '3 days ago' },
     { id: 'dr-44', name: 'Reshma Nair', rating: 5, comment: 'The different sizes are useful when preparing food for different quantities.', date: '3 days ago' },
     { id: 'dr-45', name: 'Akhil Joseph', rating: 5, comment: 'Good addition to my kitchen.', date: '3 days ago' },
-
     { id: 'dr-46', name: 'Naseema K', rating: 5, comment: 'Easy to wash after use and dries quickly.', date: '4 days ago' },
     { id: 'dr-47', name: 'Siddharth Nair', rating: 4, comment: 'Plastic quality is decent.', date: '4 days ago' },
     { id: 'dr-48', name: 'Divya Sri', rating: 5, comment: 'Vegetable cleaning became much easier after buying this set.', date: '4 days ago' },
@@ -195,7 +182,6 @@ const PRODUCT_SPECIFIC_REVIEWS = {
     { id: 'dr-52', name: 'Sangeetha M', rating: 5, comment: 'Romba useful for draining pasta. Water mattum quick ah poiduthu.', date: '4 days ago' },
     { id: 'dr-53', name: 'Niyas Ahmed', rating: 5, comment: 'No sharp edges and easy to clean.', date: '4 days ago' },
     { id: 'dr-54', name: 'Keerthana S', rating: 4, comment: 'Good set for regular household use.', date: '4 days ago' },
-
     { id: 'dr-55', name: 'Shahin P', rating: 5, comment: 'I use the medium one almost every day for vegetables and fruits.', date: '5 days ago' },
     { id: 'dr-56', name: 'Arun Vijay', rating: 5, comment: 'Rice wash panna romba easy ah irukku.', date: '5 days ago' },
     { id: 'dr-57', name: 'Anagha Krishnan', rating: 4, comment: 'Simple and practical.', date: '5 days ago' },
@@ -203,7 +189,6 @@ const PRODUCT_SPECIFIC_REVIEWS = {
     { id: 'dr-59', name: 'Mariya Jose', rating: 5, comment: 'Three sizes kittiyathu kond enikku separate bowls vangenda vannilla.', date: '5 days ago' },
     { id: 'dr-60', name: 'Praveen S', rating: 4, comment: 'Looks good and works properly.', date: '5 days ago' },
     { id: 'dr-61', name: 'Radhika Menon', rating: 5, comment: 'Very useful while washing leafy vegetables. Water drains nicely without making a mess.', date: '5 days ago' },
-
     { id: 'dr-62', name: 'Muhammed Shamil', rating: 5, comment: 'Daily kitchen workinu handy aanu.', date: '6 days ago' },
     { id: 'dr-63', name: 'Pavithra R', rating: 5, comment: 'I like the nesting design. After use all three can be stored together.', date: '6 days ago' },
     { id: 'dr-64', name: 'Karthik Raj', rating: 4, comment: 'Romba convenient for washing fruits.', date: '6 days ago' },
@@ -220,7 +205,8 @@ const PRODUCT_SPECIFIC_REVIEWS = {
     { id: 'dr-75', name: 'Sreya Menon', rating: 5, comment: 'Different sizes are genuinely useful for different ingredients.', date: '2 weeks ago' },
     { id: 'dr-76', name: 'Dinesh Kumar', rating: 4, comment: 'Simple product, but it has made washing and draining food much easier.', date: '3 weeks ago' },
     { id: 'dr-77', name: 'Fathima Niyas', rating: 5, comment: 'I was looking for a basic drainer set and this one matched what I needed. The three sizes are convenient and storage is easy.', date: '3 weeks ago' },
-    { id: 'dr-78', name: 'Surya Prakash', rating: 5, comment: 'Useful kitchen set.', date: '1 month ago' }]
+    { id: 'dr-78', name: 'Surya Prakash', rating: 5, comment: 'Useful kitchen set.', date: '1 month ago' }
+  ]
 };
 
 // Generic fallback reviews for any other added product
@@ -421,21 +407,27 @@ export default function App() {
     setActiveTab('shop');
   };
 
-  // Select the specific review list depending on product name
-  const getReviewsForProduct = (product) => {
-    if (!product) return [];
+  // Helper to select specific review list and compute stats dynamically
+  const getReviewData = (product) => {
+    if (!product) return { reviews: [], count: 0, avgRating: '4.8' };
     const name = (product.name || '').toLowerCase();
 
+    let reviews = DEFAULT_REVIEWS;
     if (name.includes('egg') || name.includes('boiler')) {
-      return PRODUCT_SPECIFIC_REVIEWS.egg_boiler;
+      reviews = PRODUCT_SPECIFIC_REVIEWS.egg_boiler;
+    } else if (name.includes('drain') || name.includes('strainer') || name.includes('3 piece')) {
+      reviews = PRODUCT_SPECIFIC_REVIEWS.drainer;
     }
-    if (name.includes('drain') || name.includes('strainer') || name.includes('3 piece')) {
-      return PRODUCT_SPECIFIC_REVIEWS.drainer;
-    }
-    return DEFAULT_REVIEWS;
+
+    const count = reviews.length;
+    const avgRating = count > 0 
+      ? (reviews.reduce((acc, r) => acc + r.rating, 0) / count).toFixed(1) 
+      : '4.8';
+
+    return { reviews, count, avgRating };
   };
 
-  const currentReviews = selectedProduct ? getReviewsForProduct(selectedProduct) : [];
+  const currentReviewData = selectedProduct ? getReviewData(selectedProduct) : { reviews: [], count: 0, avgRating: '4.8' };
 
   return (
     <div className="bg-light min-vh-100 pb-5">
@@ -495,37 +487,40 @@ export default function App() {
                   </div>
                 ) : (
                   <div className="d-flex flex-column gap-3">
-                    {products.map((prod) => (
-                      <div 
-                        key={prod.id} 
-                        className="card shadow-sm border-0 rounded-3 overflow-hidden"
-                        style={{ cursor: 'pointer' }}
-                        onClick={() => setSelectedProduct(prod)}
-                      >
-                        <img 
-                          src={prod.image || 'https://via.placeholder.com/300'} 
-                          className="card-img-top object-fit-cover" 
-                          alt={prod.name} 
-                          style={{ height: '220px' }} 
-                        />
-                        <div className="card-body p-3">
-                          <h5 className="card-title fw-bold fs-5 mb-1">{prod.name}</h5>
-                          <div className="d-flex align-items-center gap-1 mb-2">
-                            <span className="text-warning fw-bold fs-6">★ 4.8</span>
-                            <span className="text-muted small">(10 reviews)</span>
-                          </div>
-                          <p className="card-text text-muted small mb-3">{prod.description}</p>
-                          <div className="d-flex justify-content-between align-items-center">
-                            <span className="fs-3 fw-bold text-danger">₹{prod.price}</span>
-                            <button 
-                              onClick={(e) => { e.stopPropagation(); setSelectedProduct(prod); }} 
-                              className="btn btn-primary fw-bold px-4 py-2 fs-6">
-                              View Details
-                            </button>
+                    {products.map((prod) => {
+                      const { count, avgRating } = getReviewData(prod);
+                      return (
+                        <div 
+                          key={prod.id} 
+                          className="card shadow-sm border-0 rounded-3 overflow-hidden"
+                          style={{ cursor: 'pointer' }}
+                          onClick={() => setSelectedProduct(prod)}
+                        >
+                          <img 
+                            src={prod.image || 'https://via.placeholder.com/300'} 
+                            className="card-img-top object-fit-cover" 
+                            alt={prod.name} 
+                            style={{ height: '220px' }} 
+                          />
+                          <div className="card-body p-3">
+                            <h5 className="card-title fw-bold fs-5 mb-1">{prod.name}</h5>
+                            <div className="d-flex align-items-center gap-1 mb-2">
+                              <span className="text-warning fw-bold fs-6">★ {avgRating}</span>
+                              <span className="text-muted small">({count} reviews)</span>
+                            </div>
+                            <p className="card-text text-muted small mb-3">{prod.description}</p>
+                            <div className="d-flex justify-content-between align-items-center">
+                              <span className="fs-3 fw-bold text-danger">₹{prod.price}</span>
+                              <button 
+                                onClick={(e) => { e.stopPropagation(); setSelectedProduct(prod); }} 
+                                className="btn btn-primary fw-bold px-4 py-2 fs-6">
+                                View Details
+                              </button>
+                            </div>
                           </div>
                         </div>
-                      </div>
-                    ))}
+                      );
+                    })}
                   </div>
                 )}
               </div>
@@ -549,8 +544,8 @@ export default function App() {
                   <h4 className="fw-bold fs-4 mb-1">{selectedProduct.name}</h4>
                   
                   <div className="d-flex align-items-center gap-2 mb-3">
-                    <span className="badge bg-success fs-6 py-1 px-2">4.8 ★</span>
-                    <span className="text-muted small font-weight-semibold">10 Verified Reviews</span>
+                    <span className="badge bg-success fs-6 py-1 px-2">{currentReviewData.avgRating} ★</span>
+                    <span className="text-muted small font-weight-semibold">{currentReviewData.count} Verified Reviews</span>
                   </div>
 
                   <div className="mb-3">
@@ -570,9 +565,9 @@ export default function App() {
 
                   {/* PRODUCT SPECIFIC REVIEWS */}
                   <div>
-                    <h5 className="fw-bold mb-3">Customer Reviews for {selectedProduct.name}</h5>
+                    <h5 className="fw-bold mb-3">Customer Reviews for {selectedProduct.name} ({currentReviewData.count})</h5>
                     <div className="d-flex flex-column gap-3">
-                      {currentReviews.map((rev) => (
+                      {currentReviewData.reviews.map((rev) => (
                         <div key={rev.id} className="p-3 bg-light rounded border">
                           <div className="d-flex justify-content-between align-items-center mb-1">
                             <strong className="small">{rev.name}</strong>

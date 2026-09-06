@@ -14,7 +14,7 @@
 
 export const LOCAL_REVIEWS = {
   // Sample reviews for three products. Edit or replace these arrays as needed.
-  "egg_boiler": [
+  "easy_boiler": [
     { id: 'eb-1001', name: 'Muhammed', rating: 5, comment: 'Boils eggs perfectly every time.', date: '2026-09-01' },
     { id: 'eb-1002', name: 'Aiswarya', rating: 5, comment: 'Super convenient and fast.', date: '2026-08-28' },
     { id: 'eb-1003', name: 'Rakesh', rating: 4, comment: 'Good build, one plate cracked after heavy use.', date: '2026-08-20' },
@@ -22,7 +22,7 @@ export const LOCAL_REVIEWS = {
     { id: 'eb-1005', name: 'Suresh', rating: 4, comment: 'Works well but takes time for hard-boil.', date: '2026-07-12' }
   ],
 
-  "drainer": [
+  "press_scrub": [
     { id: 'dr-2001', name: 'Anjali', rating: 5, comment: 'Very handy for washing vegetables.', date: '2026-09-02' },
     { id: 'dr-2002', name: 'Karthik', rating: 5, comment: 'Sturdy and stackable set — great value.', date: '2026-08-29' },
     { id: 'dr-2003', name: 'Meera', rating: 4, comment: 'Good quality, slightly small for big salads.', date: '2026-08-14' },

@@ -135,16 +135,7 @@ export default function Admin() {
 
         if (error) throw error;
         alert('Product updated successfully!');
-        // Save reviews for this product if provided: upsert to Supabase
-        try {
-          const parsed = parseReviewsInput(reviewsInput);
-          if (parsed.length) {
-            const { error: upsertErr } = await supabase.from('product_reviews').upsert([{ product_id: editingProductId, reviews: parsed }], { returning: 'minimal' });
-            if (upsertErr) throw upsertErr;
-          }
-        } catch (err) {
-          alert('Failed to save reviews to server: ' + (err.message || err));
-        }
+        // Reviews are managed via src/reviews_local.js or localStorage; no server upsert performed.
       } else {
         // Add new product
         const { data: insertedData, error } = await supabase.from('products').insert([
@@ -159,16 +150,7 @@ export default function Admin() {
         if (error) throw error;
         // insertedData may be an array — get the first inserted row id
         const newId = Array.isArray(insertedData) && insertedData[0] ? insertedData[0].id : (insertedData?.id || null);
-        // Save reviews for the newly created product if provided: upsert to Supabase
-        try {
-          const parsed = parseReviewsInput(reviewsInput);
-          if (parsed.length && newId) {
-            const { error: upsertErr } = await supabase.from('product_reviews').upsert([{ product_id: newId, reviews: parsed }], { returning: 'minimal' });
-            if (upsertErr) throw upsertErr;
-          }
-        } catch (err) {
-          alert('Failed to save reviews to server: ' + (err.message || err));
-        }
+        // Reviews are managed via src/reviews_local.js or localStorage; no server upsert performed.
         alert('Product added successfully!');
       }
 
@@ -586,6 +568,43 @@ export default function Admin() {
             </div>
 
             {/* Manage Reviews card removed — reviews are now edited inside the Add/Edit Product form */}
+
+            {/* Product Keys helper: shows product id and slug for copying into reviews_local.js */}
+            <div className="card border-0 shadow-sm mb-3">
+              <div className="card-body p-3">
+                <div className="d-flex justify-content-between align-items-center mb-2">
+                  <strong>Product Keys (use these in src/reviews_local.js)</strong>
+                  <small className="text-muted">Copy ID or slug</small>
+                </div>
+                <div className="d-flex flex-column gap-2">
+                  {products.map((p) => {
+                    const slug = (p.name || '').toLowerCase().replace(/[^a-z0-9]+/g, '_').replace(/^_|_$/g, '');
+                    return (
+                      <div key={p.id} className="d-flex justify-content-between align-items-center bg-light p-2 rounded">
+                        <div className="small">
+                          <strong>{p.name}</strong>
+                          <div className="text-muted">id: {p.id} • slug: {slug}</div>
+                        </div>
+                        <div className="d-flex gap-2">
+                          <button
+                            className="btn btn-sm btn-outline-secondary"
+                            onClick={() => { navigator.clipboard.writeText(String(p.id)); alert('Copied ID: ' + p.id); }}
+                          >
+                            Copy ID
+                          </button>
+                          <button
+                            className="btn btn-sm btn-outline-secondary"
+                            onClick={() => { navigator.clipboard.writeText(String(slug)); alert('Copied slug: ' + slug); }}
+                          >
+                            Copy Slug
+                          </button>
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+            </div>
 
             {/* Product List */}
             <h6 className="fw-bold mb-3">All Active Products</h6>

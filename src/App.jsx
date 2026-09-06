@@ -38,7 +38,6 @@ export default function App() {
   const [trackError, setTrackError] = useState('');
   const [loading, setLoading] = useState(false);
   const [currentReviewData, setCurrentReviewData] = useState({ reviews: [], count: 0, avgRating: '4.8' });
-  const [productReviewsMap, setProductReviewsMap] = useState({}); // productId -> { reviews, count, avgRating }
 
   // Fetch dynamic products from Supabase
   const fetchProducts = async () => {
@@ -48,31 +47,7 @@ export default function App() {
       .select('*')
       .order('created_at', { ascending: false });
 
-    if (!error && data) {
-      setProducts(data);
-      // fetch reviews for these products (server-side storage)
-      try {
-        const ids = data.map((p) => p.id).filter(Boolean);
-        if (ids.length) {
-          const { data: revData, error: revErr } = await supabase
-            .from('product_reviews')
-            .select('product_id,reviews')
-            .in('product_id', ids);
-          if (!revErr && Array.isArray(revData)) {
-            const map = {};
-            revData.forEach((r) => {
-              const arr = Array.isArray(r.reviews) ? r.reviews : [];
-              const count = arr.length;
-              const avg = count > 0 ? (arr.reduce((a, it) => a + (Number(it.rating) || 0), 0) / count).toFixed(1) : '4.8';
-              map[r.product_id] = { reviews: arr, count, avgRating: avg };
-            });
-            setProductReviewsMap(map);
-          }
-        }
-      } catch (e) {
-        // ignore
-      }
-    }
+    if (!error && data) setProducts(data);
     setLoadingProducts(false);
   };
 
@@ -145,55 +120,34 @@ export default function App() {
     const newOrderId = generateOrderId();
     const finalAmount = getFinalPrice();
 
-    const { error } = await supabase.from('orders').insert([
-      {
-        order_id: newOrderId,
-        product_name: selectedProduct.name,
-        customer_name: formData.customer_name,
-        phone: formData.phone,
-        address: formData.address,
-        pincode: formData.pincode,
-        payment_method: formData.payment_method,
-        transaction_id: formData.payment_method === 'ONLINE' ? formData.transaction_id : null,
-        order_status: 'Order placed',
-        amount: finalAmount
-      }
-    ]);
-
-    setLoading(false);
-
-    if (error) {
-      alert('Failed to place order: ' + error.message);
-    } else {
-      setPlacedOrderId(newOrderId);
-      setPlacedOrderAmount(finalAmount);
-      setPlacedOrderProductName(selectedProduct?.name || '');
-      closeProduct();
-      setIsCheckout(false);
-    }
-  };
-
-  const handleTrackOrder = async (e) => {
-    if (e) e.preventDefault();
-    setTrackError('');
-    setTrackedOrder(null);
-
-    const cleanOrderId = searchOrderId.trim();
-    if (!cleanOrderId) {
-      setTrackError('Please enter an Order ID.');
-      return;
-    }
-
     const { data, error } = await supabase
       .from('orders')
-      .select('*')
-      .eq('order_id', cleanOrderId)
+      .insert([
+        {
+          order_id: newOrderId,
+          product_name: selectedProduct.name,
+          customer_name: formData.customer_name,
+          phone: formData.phone,
+          address: formData.address,
+          pincode: formData.pincode,
+          payment_method: formData.payment_method,
+          transaction_id: formData.payment_method === 'ONLINE' ? formData.transaction_id : null,
+          order_status: 'Order placed',
+          amount: finalAmount
+        }
+      ])
+      .select()
       .single();
+
+    setLoading(false);
 
     if (error || !data) {
       setTrackError('Order not found. Please check your Order ID.');
     } else {
       setTrackedOrder(data);
+      setPlacedOrderId(data.order_id || newOrderId);
+      setPlacedOrderAmount(finalAmount);
+      setPlacedOrderProductName(selectedProduct?.name || '');
     }
   };
 
@@ -230,20 +184,23 @@ export default function App() {
         return;
       }
 
+      // If repo-local reviews exist for this product, use them immediately (visible to all users)
       try {
-        const { data, error } = await supabase.from('product_reviews').select('reviews').eq('product_id', selectedProduct.id).single();
-        if (!error && data && Array.isArray(data.reviews) && data.reviews.length > 0) {
-          const parsed = data.reviews;
-          const count = parsed.length;
-          const avgRating = (parsed.reduce((acc, r) => acc + (Number(r.rating) || 0), 0) / count).toFixed(1);
-          if (mounted) setCurrentReviewData({ reviews: parsed, count, avgRating });
+        const idKey = selectedProduct.id && LOCAL_REVIEWS && LOCAL_REVIEWS[selectedProduct.id];
+        const slugKey = (selectedProduct.name || '')
+          .toLowerCase()
+          .replace(/[^a-z0-9]+/g, '_')
+          .replace(/^_|_$/g, '');
+        const nameKey = slugKey && LOCAL_REVIEWS && LOCAL_REVIEWS[slugKey];
+        if (idKey || nameKey) {
+          if (mounted) setCurrentReviewData(getReviewData(selectedProduct));
           return;
         }
       } catch (e) {
-        // ignore and fallback to local/default
+        // ignore and continue to server fetch
       }
 
-      // Fallback: use localStorage or built-in defaults via getReviewData
+      // Use frontend-only reviews (local file or localStorage) via getReviewData
       if (mounted) setCurrentReviewData(getReviewData(selectedProduct));
     };
 
@@ -351,8 +308,7 @@ export default function App() {
                 ) : (
                   <div className="d-flex flex-column gap-3">
                     {products.map((prod) => {
-                      const serverRev = productReviewsMap[prod.id];
-                      const { count, avgRating } = serverRev ? { count: serverRev.count, avgRating: serverRev.avgRating } : getReviewData(prod);
+                      const { count, avgRating } = getReviewData(prod);
                       return (
                         <div
                           key={prod.id}

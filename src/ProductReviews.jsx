@@ -33,22 +33,7 @@ export function getReviewData(product) {
   if (!product) return { reviews: [], count: 0, avgRating: '4.8' };
   const name = (product.name || '').toLowerCase();
   // Prefer admin-provided reviews stored in localStorage: product_reviews_<id>
-  try {
-    const key = `product_reviews_${product.id}`;
-    const stored = typeof window !== 'undefined' ? localStorage.getItem(key) : null;
-    if (stored) {
-      const parsed = JSON.parse(stored);
-      if (Array.isArray(parsed) && parsed.length > 0) {
-        const count = parsed.length;
-        const avgRating = (parsed.reduce((acc, r) => acc + (Number(r.rating) || 0), 0) / count).toFixed(1);
-        return { reviews: parsed, count, avgRating };
-      }
-    }
-  } catch (e) {
-    // ignore parse errors and fall back to defaults
-  }
-
-  // Next prefer local file mapping (edit src/reviews_local.js in VS Code)
+  // First prefer local file mapping (edit src/reviews_local.js in VS Code)
   try {
     if (LOCAL_REVIEWS) {
       // by product id
@@ -70,6 +55,22 @@ export function getReviewData(product) {
     }
   } catch (e) {
     // ignore
+  }
+
+  // Next prefer admin-provided reviews stored in localStorage: product_reviews_<id>
+  try {
+    const key = `product_reviews_${product.id}`;
+    const stored = typeof window !== 'undefined' ? localStorage.getItem(key) : null;
+    if (stored) {
+      const parsed = JSON.parse(stored);
+      if (Array.isArray(parsed) && parsed.length > 0) {
+        const count = parsed.length;
+        const avgRating = (parsed.reduce((acc, r) => acc + (Number(r.rating) || 0), 0) / count).toFixed(1);
+        return { reviews: parsed, count, avgRating };
+      }
+    }
+  } catch (e) {
+    // ignore parse errors and fall back to defaults
   }
 
   let reviews = DEFAULT_REVIEWS;

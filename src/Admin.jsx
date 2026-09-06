@@ -557,6 +557,34 @@ export default function Admin() {
               </div>
             </div>
 
+            <div className="mt-3">
+              <div className="card border-0 shadow-sm p-3">
+                <div className="d-flex justify-content-between align-items-center">
+                  <div>
+                    <strong className="small">Local Saved Reviews</strong>
+                    <div className="small text-muted">Clears any `product_reviews_<id>` entries stored in this browser.</div>
+                  </div>
+                  <div>
+                    <button
+                      className="btn btn-outline-danger btn-sm"
+                      onClick={() => {
+                        if (!window.confirm('Clear locally saved product reviews in this browser? This cannot be undone.')) return;
+                        try {
+                          const keys = Object.keys(localStorage).filter(k => k.startsWith('product_reviews_'));
+                          keys.forEach(k => localStorage.removeItem(k));
+                          alert('Cleared ' + keys.length + ' local review entries.');
+                        } catch (e) {
+                          alert('Failed to clear local reviews: ' + (e.message || e));
+                        }
+                      }}
+                    >
+                      Clear Local Saved Reviews
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+
             {/* Manage Reviews card removed — reviews are now edited inside the Add/Edit Product form */}
 
             {/* Product List */}

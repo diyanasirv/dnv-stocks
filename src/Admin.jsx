@@ -23,8 +23,10 @@ export default function Admin() {
   const [imageFile, setImageFile] = useState(null); // NEW: State for file upload
   const [editingProductId, setEditingProductId] = useState(null);
   const [savingProduct, setSavingProduct] = useState(false);
+  // Reviews input for product form (stored locally per product)
+  const [reviewsInput, setReviewsInput] = useState('');
 
-  const STATUS_OPTIONS = ['Processing', 'Item Packed', 'Shipped', 'Out for Delivery', 'Delivered', 'Cancelled'];
+  const STATUS_OPTIONS = ['placed', 'Order confirmed', 'Item Packed', 'Shipped', 'Out for Delivery', 'Delivered', 'Cancelled'];
 
   // --- FETCH DATA ---
   const fetchOrders = async () => {
@@ -134,18 +136,38 @@ export default function Admin() {
 
         if (error) throw error;
         alert('Product updated successfully!');
+        // Save reviews for this product if provided
+        try {
+          const parsed = parseReviewsInput(reviewsInput);
+          if (parsed.length) {
+            localStorage.setItem(`product_reviews_${editingProductId}`, JSON.stringify(parsed));
+          }
+        } catch (err) {
+          console.warn('Failed to save reviews for product:', err.message);
+        }
       } else {
         // Add new product
-        const { error } = await supabase.from('products').insert([
+        const { data: insertedData, error } = await supabase.from('products').insert([
           {
             name: productForm.name,
             price: parseFloat(productForm.price),
             description: productForm.description,
             image: imageUrl || 'https://via.placeholder.com/300'
           }
-        ]);
+        ]).select();
 
         if (error) throw error;
+        // insertedData may be an array — get the first inserted row id
+        const newId = Array.isArray(insertedData) && insertedData[0] ? insertedData[0].id : (insertedData?.id || null);
+        // Save reviews for the newly created product if provided
+        try {
+          const parsed = parseReviewsInput(reviewsInput);
+          if (parsed.length && newId) {
+            localStorage.setItem(`product_reviews_${newId}`, JSON.stringify(parsed));
+          }
+        } catch (err) {
+          console.warn('Failed to save reviews for new product:', err.message);
+        }
         alert('Product added successfully!');
       }
 
@@ -153,6 +175,7 @@ export default function Admin() {
       setEditingProductId(null);
       setImageFile(null);
       setProductForm({ name: '', price: '', description: '', image: '' });
+      setReviewsInput('');
       fetchProducts();
     } catch (err) {
       alert('Error saving product: ' + err.message);
@@ -170,6 +193,14 @@ export default function Admin() {
       description: prod.description || '',
       image: prod.image || ''
     });
+    // Load any saved reviews for this product into the edit textarea
+    try {
+      const stored = localStorage.getItem(`product_reviews_${prod.id}`);
+      if (stored) setReviewsInput(stored);
+      else setReviewsInput('');
+    } catch (e) {
+      setReviewsInput('');
+    }
   };
 
   const handleDeleteProduct = async (productId) => {
@@ -187,7 +218,61 @@ export default function Admin() {
     setEditingProductId(null);
     setImageFile(null);
     setProductForm({ name: '', price: '', description: '', image: '' });
+    setReviewsInput('');
   };
+
+  // --- Reviews helper (parser used by product create/update) ---
+
+  const parseReviewsInput = (text) => {
+    const out = [];
+    const trimmed = text.trim();
+    if (!trimmed) return out;
+
+    // Try JSON first
+    try {
+      const parsed = JSON.parse(trimmed);
+      if (Array.isArray(parsed)) {
+        parsed.forEach((r, i) => {
+          if (r && (r.name || r.comment)) {
+            out.push({ id: r.id || `${Date.now()}-${i}`, name: (r.name || '').trim(), rating: Number(r.rating) || 5, comment: (r.comment || '').trim(), date: (r.date || '').trim() });
+          }
+        });
+        return out;
+      }
+    } catch (e) {
+      // not JSON
+    }
+
+    const lines = trimmed.split(/\r?\n/).map(l => l.trim()).filter(Boolean);
+    lines.forEach((line, idx) => {
+      let parts = null;
+      if (line.includes('|')) parts = line.split('|');
+      else if (line.includes(',')) parts = line.split(',');
+      else if (line.includes('\t')) parts = line.split('\t');
+      else parts = line.split(/\s{2,}/); // split on two+ spaces
+
+      if (parts.length >= 4) {
+        const name = parts[0].trim();
+        const rating = Number(parts[1].trim()) || 5;
+        const comment = parts[2].trim();
+        const date = parts.slice(3).join('|').trim();
+        out.push({ id: `${Date.now()}-${idx}`, name, rating, comment, date });
+      } else if (parts.length === 3) {
+        const [name, ratingOrComment, maybeDate] = parts.map(p => p.trim());
+        const rating = Number(ratingOrComment) || 5;
+        out.push({ id: `${Date.now()}-${idx}`, name, rating, comment: maybeDate, date: '' });
+      } else {
+        // fallback: try to extract rating as a digit in the line
+        const m = line.match(/(\d)\s*$/);
+        const rating = m ? Number(m[1]) : 5;
+        out.push({ id: `${Date.now()}-${idx}`, name: line.substring(0, 30).trim(), rating, comment: line, date: '' });
+      }
+    });
+
+    return out;
+  };
+
+  // (Standalone review management removed.)
 
   // Filter Orders
   const filteredOrders = orders.filter((order) => {
@@ -250,7 +335,7 @@ export default function Admin() {
             ) : (
               <div className="d-flex flex-column gap-3">
                 {filteredOrders.map((order) => {
-                  const currentStatus = order.order_status || 'Processing';
+                  const currentStatus = order.order_status || 'Placed';
                   const isPreset = STATUS_OPTIONS.includes(currentStatus);
 
                   return (
@@ -415,6 +500,19 @@ export default function Admin() {
                     ></textarea>
                   </div>
 
+                  <div className="mb-3">
+                    <label className="form-label small fw-semibold mb-1">Product Reviews (optional)</label>
+                    <textarea
+                      name="product_reviews"
+                      className="form-control form-control-sm"
+                      rows={4}
+                      placeholder={'Paste JSON array or lines (name | rating | comment | date) — saved to localStorage for this product'}
+                      value={reviewsInput}
+                      onChange={(e) => setReviewsInput(e.target.value)}
+                    ></textarea>
+                    <div className="form-text small text-muted">This will be saved locally for the product and shown on the product page. Use JSON or delimited lines.</div>
+                  </div>
+
                   <div className="d-flex gap-2">
                     <button type="submit" disabled={savingProduct} className="btn btn-success btn-sm fw-bold px-3">
                       {savingProduct ? 'Saving...' : editingProductId ? 'Update Product' : 'Add Product'}
@@ -429,6 +527,8 @@ export default function Admin() {
               </div>
             </div>
 
+            {/* Manage Reviews card removed — reviews are now edited inside the Add/Edit Product form */}
+
             {/* Product List */}
             <h6 className="fw-bold mb-3">All Active Products</h6>
             {loadingProducts ? (
@@ -440,7 +540,10 @@ export default function Admin() {
             ) : (
               <div className="d-flex flex-column gap-2">
                 {products.map((prod) => (
-                  <div key={prod.id} className="card border-0 shadow-sm p-2">
+                  <div
+                    key={prod.id}
+                    className="card border-0 shadow-sm p-2"
+                  >
                     <div className="d-flex align-items-center gap-3">
                       <img
                         src={prod.image || 'https://via.placeholder.com/60'}
@@ -458,13 +561,13 @@ export default function Admin() {
                       <div className="d-flex gap-1">
                         <button
                           className="btn btn-outline-primary btn-sm py-1 px-2"
-                          onClick={() => handleEditProductClick(prod)}
+                          onClick={(e) => { e.stopPropagation(); handleEditProductClick(prod); }}
                         >
                           ✏️ Edit
                         </button>
                         <button
                           className="btn btn-outline-danger btn-sm py-1 px-2"
-                          onClick={() => handleDeleteProduct(prod.id)}
+                          onClick={(e) => { e.stopPropagation(); handleDeleteProduct(prod.id); }}
                         >
                           🗑️ Delete
                         </button>

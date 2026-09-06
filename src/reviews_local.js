@@ -1,4 +1,4 @@
-// src/reviews_local.js
+ // src/reviews_local.js
 // Local review list for development / quick edits.
 // Paste your large review arrays here in VS Code and they will show up in the app without any server.
 // Key the mapping by product id or a simple lowercase product name key.

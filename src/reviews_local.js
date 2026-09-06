@@ -716,7 +716,7 @@ export const LOCAL_REVIEWS = {
     { id: 'cb-1426', name: 'Aparna', rating: 5, comment: 'Good cleaning brush for the kitchen sink.', date: '2026-05-20' },
     { id: 'cb-1427', name: 'Faizal', rating: 5, comment: 'Handle feels sturdy and comfortable.', date: '2026-05-19' },
     { id: 'cb-1428', name: 'Deepa', rating: 4, comment: 'Very handy for quick cleaning jobs.', date: '2026-05-19' },
-    { id: 'cb-1429', name: 'Akshay', rating: 5, comment: 'Good everyday cleaning tool and easy to wash.', date: '2026-05-19' },
+    { id: 'cb-1429', name: 'Akshay', rating: 5, comment: 'Good everyday cleaning tool and easy to wash.', date: '2026-05-19' }
 
       ],
       

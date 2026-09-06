@@ -70,9 +70,13 @@ export default function ProductReviews({ selectedProduct, currentReviewData }) {
       <h5 className="fw-bold mb-3">Customer Reviews for {selectedProduct.name} ({currentReviewData.count})</h5>
       <div className="d-flex flex-column gap-3">
         {currentReviewData.reviews.map((rev) => {
-          const displayName = (
-            rev.name || rev.fullName || rev.full_name || rev.author || rev.reviewer || rev.customer_name || rev.customer || rev.username || rev.title || 'Anonymous'
+          let displayName = (
+            rev.name || rev.fullName || rev.full_name || rev.author || rev.reviewer || rev.customer_name || rev.customer || rev.username || rev.title || ''
           );
+          if (!displayName) {
+            const rawComment = (rev.comment || rev.review || rev.text || rev.body || '').toString().trim();
+            displayName = rawComment ? rawComment.substring(0, 24) + (rawComment.length > 24 ? '...' : '') : 'Anonymous';
+          }
           const rating = Number(rev.rating ?? rev.rate ?? rev.stars ?? rev.score) || 5;
           const comment = rev.comment || rev.review || rev.text || rev.body || '';
 

@@ -224,6 +224,28 @@ export const LOCAL_REVIEWS = {
     { id: 'eb-1203', name: 'Ananya', rating: 4, comment: 'Good product for quick egg preparation.', date: '2026-08-27' },
     { id: 'eb-1204', name: 'Sreejith', rating: 5, comment: 'Very useful. Boiling eggs is much simpler now.', date: '2026-08-27' },
     { id: 'eb-1205', name: 'Shahana', rating: 5, comment: 'Nalla convenient aanu, really happy with it.', date: '2026-08-27' }
+         { id: 'eb-1206', name: 'Riya', rating: 5, comment: 'Very convenient for making boiled eggs quickly.', date: '2026-08-26' },
+    { id: 'eb-1207', name: 'Ameen', rating: 5, comment: 'Nalla product aanu, use cheyyan valare easy aanu.', date: '2026-08-26' },
+    { id: 'eb-1208', name: 'Kavya', rating: 4, comment: 'Good appliance and takes very little space.', date: '2026-08-26' },
+    { id: 'eb-1209', name: 'Sanjay', rating: 5, comment: 'Eggs come out nicely every time. Very useful.', date: '2026-08-26' },
+    { id: 'eb-1210', name: 'Hiba', rating: 5, comment: 'Simple to use and perfect for busy mornings.', date: '2026-08-26' },
+    { id: 'eb-1211', name: 'Arun', rating: 4, comment: 'Works well and is easy to clean after use.', date: '2026-08-26' },
+    { id: 'eb-1212', name: 'Fathima', rating: 5, comment: 'Super handy aanu. Breakfast preparation easy aakki.', date: '2026-08-26' },
+    { id: 'eb-1213', name: 'Vivek', rating: 5, comment: 'Good quality and consistent results.', date: '2026-08-26' },
+    { id: 'eb-1214', name: 'Anjali', rating: 4, comment: 'Nice compact product for a small kitchen.', date: '2026-08-26' },
+    { id: 'eb-1215', name: 'Shameer', rating: 5, comment: 'Very useful for daily egg boiling.', date: '2026-08-26' },
+    { id: 'eb-1216', name: 'Meera', rating: 5, comment: 'Really happy with how quickly it works.', date: '2026-08-25' },
+    { id: 'eb-1217', name: 'Nikhil', rating: 4, comment: 'Good product overall and easy to operate.', date: '2026-08-25' },
+    { id: 'eb-1218', name: 'Aiswarya', rating: 5, comment: 'Nalla quality undu, daily useinu perfect aanu.', date: '2026-08-25' },
+    { id: 'eb-1219', name: 'Rahul', rating: 5, comment: 'Makes breakfast much easier and faster.', date: '2026-08-25' },
+    { id: 'eb-1220', name: 'Sana', rating: 4, comment: 'Good performance and convenient size.', date: '2026-08-25' },
+    { id: 'eb-1221', name: 'Jishnu', rating: 5, comment: 'Very easy to use. Eggs cook evenly.', date: '2026-08-25' },
+    { id: 'eb-1222', name: 'Reshma', rating: 5, comment: 'Really useful kitchen gadget. Happy with it.', date: '2026-08-25' },
+    { id: 'eb-1223', name: 'Adarsh', rating: 4, comment: 'Works nicely and does not take much counter space.', date: '2026-08-25' },
+    { id: 'eb-1224', name: 'Mariam', rating: 5, comment: 'Good appliance for quick meals and breakfast.', date: '2026-08-25' },
+    { id: 'eb-1225', name: 'Sreeraj', rating: 5, comment: 'Nalla convenient aanu. Time save cheyyunnu.', date: '2026-08-25' },
+    { id: 'eb-1226', name: 'Neha', rating: 4, comment: 'Simple, compact and useful for regular use.', date: '2026-08-25' }
+  
   ],
 
   "press_scrub": [

@@ -26,7 +26,7 @@ export default function Admin() {
   // Reviews input for product form (stored locally per product)
   const [reviewsInput, setReviewsInput] = useState('');
 
-  const STATUS_OPTIONS = ['placed', 'Order confirmed', 'Item Packed', 'Shipped', 'Out for Delivery', 'Delivered', 'Cancelled'];
+  const STATUS_OPTIONS = ['Order placed', 'Order confirmed', 'Item Packed', 'Shipped', 'Out for Delivery', 'Delivered', 'Cancelled'];
 
   // --- FETCH DATA ---
   const fetchOrders = async () => {
@@ -136,14 +136,22 @@ export default function Admin() {
 
         if (error) throw error;
         alert('Product updated successfully!');
-        // Save reviews for this product if provided
+        // Save reviews for this product if provided: try Supabase first, fallback to localStorage
         try {
           const parsed = parseReviewsInput(reviewsInput);
           if (parsed.length) {
-            localStorage.setItem(`product_reviews_${editingProductId}`, JSON.stringify(parsed));
+            // try upsert to Supabase table `product_reviews` with columns (product_id, reviews)
+            try {
+              const { error: upsertErr } = await supabase.from('product_reviews').upsert([{ product_id: editingProductId, reviews: parsed }], { returning: 'minimal' });
+              if (upsertErr) throw upsertErr;
+            } catch (srvErr) {
+              // fallback to localStorage when server save fails
+              try { localStorage.setItem(`product_reviews_${editingProductId}`, JSON.stringify(parsed)); } catch (e) { /* ignore */ }
+              console.warn('Could not save reviews to Supabase, saved locally instead:', srvErr.message || srvErr);
+            }
           }
         } catch (err) {
-          console.warn('Failed to save reviews for product:', err.message);
+          console.warn('Failed to parse/save reviews for product:', err.message);
         }
       } else {
         // Add new product
@@ -159,14 +167,20 @@ export default function Admin() {
         if (error) throw error;
         // insertedData may be an array — get the first inserted row id
         const newId = Array.isArray(insertedData) && insertedData[0] ? insertedData[0].id : (insertedData?.id || null);
-        // Save reviews for the newly created product if provided
+        // Save reviews for the newly created product if provided: try Supabase first, fallback to localStorage
         try {
           const parsed = parseReviewsInput(reviewsInput);
           if (parsed.length && newId) {
-            localStorage.setItem(`product_reviews_${newId}`, JSON.stringify(parsed));
+            try {
+              const { error: upsertErr } = await supabase.from('product_reviews').upsert([{ product_id: newId, reviews: parsed }], { returning: 'minimal' });
+              if (upsertErr) throw upsertErr;
+            } catch (srvErr) {
+              try { localStorage.setItem(`product_reviews_${newId}`, JSON.stringify(parsed)); } catch (e) { /* ignore */ }
+              console.warn('Could not save reviews to Supabase, saved locally instead:', srvErr.message || srvErr);
+            }
           }
         } catch (err) {
-          console.warn('Failed to save reviews for new product:', err.message);
+          console.warn('Failed to parse/save reviews for new product:', err.message);
         }
         alert('Product added successfully!');
       }

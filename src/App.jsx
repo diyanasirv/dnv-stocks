@@ -37,6 +37,7 @@ export default function App() {
   const [trackedOrder, setTrackedOrder] = useState(null);
   const [trackError, setTrackError] = useState('');
   const [loading, setLoading] = useState(false);
+  const [currentReviewData, setCurrentReviewData] = useState({ reviews: [], count: 0, avgRating: '4.8' });
 
   // Fetch dynamic products from Supabase
   const fetchProducts = async () => {
@@ -197,7 +198,35 @@ export default function App() {
 
   // `getReviewData` is imported from `src/ProductReviews.jsx` and used below
 
-  const currentReviewData = selectedProduct ? getReviewData(selectedProduct) : { reviews: [], count: 0, avgRating: '4.8' };
+  // When a product is selected, prefer server-stored reviews (Supabase `product_reviews` table).
+  useEffect(() => {
+    let mounted = true;
+    const loadReviews = async () => {
+      if (!selectedProduct) {
+        if (mounted) setCurrentReviewData({ reviews: [], count: 0, avgRating: '4.8' });
+        return;
+      }
+
+      try {
+        const { data, error } = await supabase.from('product_reviews').select('reviews').eq('product_id', selectedProduct.id).single();
+        if (!error && data && Array.isArray(data.reviews) && data.reviews.length > 0) {
+          const parsed = data.reviews;
+          const count = parsed.length;
+          const avgRating = (parsed.reduce((acc, r) => acc + (Number(r.rating) || 0), 0) / count).toFixed(1);
+          if (mounted) setCurrentReviewData({ reviews: parsed, count, avgRating });
+          return;
+        }
+      } catch (e) {
+        // ignore and fallback to local/default
+      }
+
+      // Fallback: use localStorage or built-in defaults via getReviewData
+      if (mounted) setCurrentReviewData(getReviewData(selectedProduct));
+    };
+
+    loadReviews();
+    return () => { mounted = false; };
+  }, [selectedProduct]);
 
   return (
     <div className="bg-light min-vh-100 pb-5">

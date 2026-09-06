@@ -241,8 +241,12 @@ export default function Admin() {
       const parsed = JSON.parse(trimmed);
       if (Array.isArray(parsed)) {
         parsed.forEach((r, i) => {
-          if (r && (r.name || r.comment)) {
-            out.push({ id: r.id || `${Date.now()}-${i}`, name: (r.name || '').trim(), rating: Number(r.rating) || 5, comment: (r.comment || '').trim(), date: (r.date || '').trim() });
+          if (r && (r.name || r.comment || r.review || r.author || r.customer_name)) {
+            const name = (r.name || r.fullName || r.full_name || r.author || r.reviewer || r.customer_name || r.customer || r.username || r.title || '').toString().trim();
+            const rating = Number(r.rating ?? r.rate ?? r.stars ?? r.score) || 5;
+            const comment = (r.comment || r.review || r.text || r.body || '').toString().trim();
+            const date = (r.date || r.created_at || r.time || '').toString().trim();
+            out.push({ id: r.id || `${Date.now()}-${i}`, name, rating, comment, date });
           }
         });
         return out;

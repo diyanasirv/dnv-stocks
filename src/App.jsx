@@ -38,6 +38,7 @@ export default function App() {
   const [trackError, setTrackError] = useState('');
   const [loading, setLoading] = useState(false);
   const [currentReviewData, setCurrentReviewData] = useState({ reviews: [], count: 0, avgRating: '4.8' });
+  const [productReviewsMap, setProductReviewsMap] = useState({}); // productId -> { reviews, count, avgRating }
 
   // Fetch dynamic products from Supabase
   const fetchProducts = async () => {
@@ -49,6 +50,28 @@ export default function App() {
 
     if (!error && data) {
       setProducts(data);
+      // fetch reviews for these products (server-side storage)
+      try {
+        const ids = data.map((p) => p.id).filter(Boolean);
+        if (ids.length) {
+          const { data: revData, error: revErr } = await supabase
+            .from('product_reviews')
+            .select('product_id,reviews')
+            .in('product_id', ids);
+          if (!revErr && Array.isArray(revData)) {
+            const map = {};
+            revData.forEach((r) => {
+              const arr = Array.isArray(r.reviews) ? r.reviews : [];
+              const count = arr.length;
+              const avg = count > 0 ? (arr.reduce((a, it) => a + (Number(it.rating) || 0), 0) / count).toFixed(1) : '4.8';
+              map[r.product_id] = { reviews: arr, count, avgRating: avg };
+            });
+            setProductReviewsMap(map);
+          }
+        }
+      } catch (e) {
+        // ignore
+      }
     }
     setLoadingProducts(false);
   };
@@ -145,7 +168,7 @@ export default function App() {
       setPlacedOrderId(newOrderId);
       setPlacedOrderAmount(finalAmount);
       setPlacedOrderProductName(selectedProduct?.name || '');
-      setSelectedProduct(null);
+      closeProduct();
       setIsCheckout(false);
     }
   };
@@ -228,6 +251,34 @@ export default function App() {
     return () => { mounted = false; };
   }, [selectedProduct]);
 
+  // History helpers: open/close product and handle browser back/forward
+  useEffect(() => {
+    const handlePop = (e) => {
+      const path = window.location.pathname;
+      if (path.startsWith('/product/')) {
+        const id = path.split('/product/')[1];
+        const prod = products.find((p) => String(p.id) === String(id));
+        if (prod) setSelectedProduct(prod);
+        else setSelectedProduct(null);
+      } else {
+        setSelectedProduct(null);
+      }
+    };
+
+    window.addEventListener('popstate', handlePop);
+    return () => window.removeEventListener('popstate', handlePop);
+  }, [products]);
+
+  const openProduct = (prod) => {
+    setSelectedProduct(prod);
+    try { window.history.pushState({ productId: prod.id }, '', `/product/${prod.id}`); } catch (e) { /* ignore */ }
+  };
+
+  const closeProduct = () => {
+    setSelectedProduct(null);
+    try { window.history.pushState({}, '', '/'); } catch (e) { /* ignore */ }
+  };
+
   return (
     <div className="bg-light min-vh-100 pb-5">
       {/* Navbar */}
@@ -237,7 +288,7 @@ export default function App() {
           <div className="btn-group" role="group">
             <button
               className={`btn btn-sm ${activeTab === 'shop' ? 'btn-primary fw-bold' : 'btn-outline-primary'}`}
-              onClick={() => { setActiveTab('shop'); setPlacedOrderId(null); setSelectedProduct(null); setIsCheckout(false); fetchProducts(); window.history.pushState({}, '', '/'); }}>
+              onClick={() => { setActiveTab('shop'); setPlacedOrderId(null); closeProduct(); setIsCheckout(false); fetchProducts(); window.history.pushState({}, '', '/'); }}>
               Shop
             </button>
             <button
@@ -300,13 +351,14 @@ export default function App() {
                 ) : (
                   <div className="d-flex flex-column gap-3">
                     {products.map((prod) => {
-                      const { count, avgRating } = getReviewData(prod);
+                      const serverRev = productReviewsMap[prod.id];
+                      const { count, avgRating } = serverRev ? { count: serverRev.count, avgRating: serverRev.avgRating } : getReviewData(prod);
                       return (
                         <div
                           key={prod.id}
                           className="card shadow-sm border-0 rounded-3 overflow-hidden"
                           style={{ cursor: 'pointer' }}
-                          onClick={() => setSelectedProduct(prod)}
+                          onClick={() => openProduct(prod)}
                         >
                           <img
                             src={prod.image || 'https://via.placeholder.com/300'}
@@ -324,7 +376,7 @@ export default function App() {
                             <div className="d-flex justify-content-between align-items-center">
                               <span className="fs-3 fw-bold text-danger">₹{prod.price}</span>
                               <button
-                                onClick={(e) => { e.stopPropagation(); setSelectedProduct(prod); }}
+                                onClick={(e) => { e.stopPropagation(); openProduct(prod); }}
                                 className="btn btn-primary fw-bold px-4 py-2 fs-6">
                                 View Details
                               </button>
@@ -341,7 +393,7 @@ export default function App() {
               <div className="card shadow-sm border-0 rounded-3">
                 <div className="card-body p-3">
                   <button
-                    onClick={() => setSelectedProduct(null)}
+                    onClick={() => closeProduct()}
                     className="btn btn-light btn-sm fw-semibold mb-3 border w-100 py-2">
                     ← Back to Products
                   </button>

@@ -223,7 +223,7 @@ export const LOCAL_REVIEWS = {
     { id: 'eb-1202', name: 'Faizal', rating: 5, comment: 'Works nicely and is easy to maintain.', date: '2026-08-27' },
     { id: 'eb-1203', name: 'Ananya', rating: 4, comment: 'Good product for quick egg preparation.', date: '2026-08-27' },
     { id: 'eb-1204', name: 'Sreejith', rating: 5, comment: 'Very useful. Boiling eggs is much simpler now.', date: '2026-08-27' },
-    { id: 'eb-1205', name: 'Shahana', rating: 5, comment: 'Nalla convenient aanu, really happy with it.', date: '2026-08-27' }
+    { id: 'eb-1205', name: 'Shahana', rating: 5, comment: 'Nalla convenient aanu, really happy with it.', date: '2026-08-27' },
          { id: 'eb-1206', name: 'Riya', rating: 5, comment: 'Very convenient for making boiled eggs quickly.', date: '2026-08-26' },
     { id: 'eb-1207', name: 'Ameen', rating: 5, comment: 'Nalla product aanu, use cheyyan valare easy aanu.', date: '2026-08-26' },
     { id: 'eb-1208', name: 'Kavya', rating: 4, comment: 'Good appliance and takes very little space.', date: '2026-08-26' },

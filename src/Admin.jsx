@@ -562,7 +562,7 @@ export default function Admin() {
                 <div className="d-flex justify-content-between align-items-center">
                   <div>
                     <strong className="small">Local Saved Reviews</strong>
-                    <div className="small text-muted">Clears any `product_reviews_<id>` entries stored in this browser.</div>
+                    <div className="small text-muted">Clears any {'product_reviews_<id>'} entries stored in this browser.</div>
                   </div>
                   <div>
                     <button

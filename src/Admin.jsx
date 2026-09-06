@@ -565,6 +565,37 @@ export default function Admin() {
                       onChange={(e) => setReviewsInput(e.target.value)}
                     ></textarea>
                     <div className="form-text small text-muted">This will be saved locally for the product and shown on the product page. Use JSON or delimited lines.</div>
+                    {/* Live preview of parsed reviews (shows how names will appear) */}
+                    {reviewsInput && (() => {
+                      try {
+                        const parsedPreview = parseReviewsInput(reviewsInput);
+                        if (parsedPreview.length > 0) {
+                          return (
+                            <div className="mt-2">
+                              <div className="small fw-bold mb-1">Preview ({parsedPreview.length})</div>
+                              <div className="d-flex flex-column gap-2">
+                                {parsedPreview.slice(0, 10).map((r) => (
+                                  <div key={r.id} className="p-2 bg-white border rounded small">
+                                    <div className="d-flex justify-content-between align-items-center mb-1">
+                                      <strong className="text-dark">{r.name}</strong>
+                                      <span className="text-muted">{r.date}</span>
+                                    </div>
+                                    <div className="text-warning mb-1">{'★'.repeat(r.rating)}{'☆'.repeat(5 - r.rating)}</div>
+                                    <div className="text-muted">{r.comment}</div>
+                                  </div>
+                                ))}
+                                {parsedPreview.length > 10 && (
+                                  <div className="text-muted small">...showing 10 of {parsedPreview.length} reviews</div>
+                                )}
+                              </div>
+                            </div>
+                          );
+                        }
+                      } catch (e) {
+                        return null;
+                      }
+                      return null;
+                    })()}
                   </div>
 
                   <div className="d-flex gap-2">

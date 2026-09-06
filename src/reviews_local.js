@@ -850,7 +850,7 @@ export const LOCAL_REVIEWS = {
     { id: 'ed-1127', name: 'Aravind', rating: 5, comment: 'Very handy for draining washed vegetables.', date: '2026-07-25' },
     { id: 'ed-1128', name: 'Nazeera', rating: 5, comment: 'Nalla convenient aanu and cleaning is easy.', date: '2026-07-25' },
     { id: 'ed-1129', name: 'Maya', rating: 4, comment: 'Compact set with good utility.', date: '2026-07-24' },
-    { id: 'ed-1130', name: 'Sreejith', rating: 5, comment: 'Very useful for daily meal preparation.', date: '2026-07-24' }
+    { id: 'ed-1130', name: 'Sreejith', rating: 5, comment: 'Very useful for daily meal preparation.', date: '2026-07-24' },
         { id: 'ed-1131', name: 'Aarav', rating: 5, comment: 'Very useful for washing and draining vegetables.', date: '2026-07-24' },
     { id: 'ed-1132', name: 'Sreedevi', rating: 4, comment: 'Good quality and easy to handle.', date: '2026-07-23' },
     { id: 'ed-1133', name: 'Faheem', rating: 5, comment: 'Nalla useful aanu for daily kitchen work.', date: '2026-07-23' },

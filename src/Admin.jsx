@@ -136,22 +136,15 @@ export default function Admin() {
 
         if (error) throw error;
         alert('Product updated successfully!');
-        // Save reviews for this product if provided: try Supabase first, fallback to localStorage
+        // Save reviews for this product if provided: upsert to Supabase
         try {
           const parsed = parseReviewsInput(reviewsInput);
           if (parsed.length) {
-            // try upsert to Supabase table `product_reviews` with columns (product_id, reviews)
-            try {
-              const { error: upsertErr } = await supabase.from('product_reviews').upsert([{ product_id: editingProductId, reviews: parsed }], { returning: 'minimal' });
-              if (upsertErr) throw upsertErr;
-            } catch (srvErr) {
-              // fallback to localStorage when server save fails
-              try { localStorage.setItem(`product_reviews_${editingProductId}`, JSON.stringify(parsed)); } catch (e) { /* ignore */ }
-              console.warn('Could not save reviews to Supabase, saved locally instead:', srvErr.message || srvErr);
-            }
+            const { error: upsertErr } = await supabase.from('product_reviews').upsert([{ product_id: editingProductId, reviews: parsed }], { returning: 'minimal' });
+            if (upsertErr) throw upsertErr;
           }
         } catch (err) {
-          console.warn('Failed to parse/save reviews for product:', err.message);
+          alert('Failed to save reviews to server: ' + (err.message || err));
         }
       } else {
         // Add new product
@@ -167,20 +160,15 @@ export default function Admin() {
         if (error) throw error;
         // insertedData may be an array — get the first inserted row id
         const newId = Array.isArray(insertedData) && insertedData[0] ? insertedData[0].id : (insertedData?.id || null);
-        // Save reviews for the newly created product if provided: try Supabase first, fallback to localStorage
+        // Save reviews for the newly created product if provided: upsert to Supabase
         try {
           const parsed = parseReviewsInput(reviewsInput);
           if (parsed.length && newId) {
-            try {
-              const { error: upsertErr } = await supabase.from('product_reviews').upsert([{ product_id: newId, reviews: parsed }], { returning: 'minimal' });
-              if (upsertErr) throw upsertErr;
-            } catch (srvErr) {
-              try { localStorage.setItem(`product_reviews_${newId}`, JSON.stringify(parsed)); } catch (e) { /* ignore */ }
-              console.warn('Could not save reviews to Supabase, saved locally instead:', srvErr.message || srvErr);
-            }
+            const { error: upsertErr } = await supabase.from('product_reviews').upsert([{ product_id: newId, reviews: parsed }], { returning: 'minimal' });
+            if (upsertErr) throw upsertErr;
           }
         } catch (err) {
-          console.warn('Failed to parse/save reviews for new product:', err.message);
+          alert('Failed to save reviews to server: ' + (err.message || err));
         }
         alert('Product added successfully!');
       }
@@ -207,14 +195,20 @@ export default function Admin() {
       description: prod.description || '',
       image: prod.image || ''
     });
-    // Load any saved reviews for this product into the edit textarea
-    try {
-      const stored = localStorage.getItem(`product_reviews_${prod.id}`);
-      if (stored) setReviewsInput(stored);
-      else setReviewsInput('');
-    } catch (e) {
-      setReviewsInput('');
-    }
+    // Load saved reviews for this product from Supabase into the edit textarea
+    (async () => {
+      try {
+        const { data, error } = await supabase.from('product_reviews').select('reviews').eq('product_id', prod.id).single();
+        if (!error && data && Array.isArray(data.reviews)) {
+          // show as pretty JSON for editing
+          setReviewsInput(JSON.stringify(data.reviews, null, 2));
+        } else {
+          setReviewsInput('');
+        }
+      } catch (err) {
+        setReviewsInput('');
+      }
+    })();
   };
 
   const handleDeleteProduct = async (productId) => {

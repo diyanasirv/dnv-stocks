@@ -1,11 +1,10 @@
+
 import React, { useState, useEffect } from 'react';
 import { supabase } from './supabaseClient';
 import Admin from './Admin';
 import ProductReviews, { getReviewData } from './ProductReviews';
 
 const ADMIN_PIN = '5840';
-
-// moved review data into ProductReviews.jsx
 
 export default function App() {
   const [activeTab, setActiveTab] = useState('shop');
@@ -151,6 +150,24 @@ export default function App() {
     }
   };
 
+  const handleTrackOrder = async (e) => {
+    if (e) e.preventDefault();
+    setTrackError('');
+    setTrackedOrder(null);
+
+    const { data, error } = await supabase
+      .from('orders')
+      .select('*')
+      .eq('order_id', searchOrderId.trim())
+      .single();
+
+    if (error || !data) {
+      setTrackError('Order not found. Please check your Order ID.');
+    } else {
+      setTrackedOrder(data);
+    }
+  };
+
   const copyUpiId = () => {
     navigator.clipboard.writeText('diyanasir01-2@oksbi');
     alert('UPI ID copied to clipboard!');
@@ -173,9 +190,6 @@ export default function App() {
     setActiveTab('shop');
   };
 
-  // `getReviewData` is imported from `src/ProductReviews.jsx` and used below
-
-  // When a product is selected, prefer server-stored reviews (Supabase `product_reviews` table).
   useEffect(() => {
     let mounted = true;
     const loadReviews = async () => {
@@ -183,24 +197,6 @@ export default function App() {
         if (mounted) setCurrentReviewData({ reviews: [], count: 0, avgRating: '4.8' });
         return;
       }
-
-      // If repo-local reviews exist for this product, use them immediately (visible to all users)
-      try {
-        const idKey = selectedProduct.id && LOCAL_REVIEWS && LOCAL_REVIEWS[selectedProduct.id];
-        const slugKey = (selectedProduct.name || '')
-          .toLowerCase()
-          .replace(/[^a-z0-9]+/g, '_')
-          .replace(/^_|_$/g, '');
-        const nameKey = slugKey && LOCAL_REVIEWS && LOCAL_REVIEWS[slugKey];
-        if (idKey || nameKey) {
-          if (mounted) setCurrentReviewData(getReviewData(selectedProduct));
-          return;
-        }
-      } catch (e) {
-        // ignore and continue to server fetch
-      }
-
-      // Use frontend-only reviews (local file or localStorage) via getReviewData
       if (mounted) setCurrentReviewData(getReviewData(selectedProduct));
     };
 
@@ -208,7 +204,6 @@ export default function App() {
     return () => { mounted = false; };
   }, [selectedProduct]);
 
-  // History helpers: open/close product and handle browser back/forward
   useEffect(() => {
     const handlePop = (e) => {
       const path = window.location.pathname;
@@ -236,8 +231,13 @@ export default function App() {
     try { window.history.pushState({}, '', '/'); } catch (e) { /* ignore */ }
   };
 
+  // WhatsApp Prebuilt Chat URL
+  const whatsappNumber = '918156902004';
+  const directChatMessage = encodeURIComponent('Hi! I am visiting your site and have a question.');
+  const whatsappUrl = `https://wa.me/${whatsappNumber}?text=${directChatMessage}`;
+
   return (
-    <div className="bg-light min-vh-100 pb-5">
+    <div className="bg-light min-vh-100 pb-5 position-relative">
       {/* Navbar */}
       <nav className="navbar sticky-top bg-white border-bottom shadow-sm py-2">
         <div className="container-fluid px-3 d-flex justify-content-between align-items-center">
@@ -274,9 +274,8 @@ export default function App() {
                     📸 <strong>Important:</strong> Take a screenshot or copy this Order ID to track your order!
                   </div>
 
-                  {/* WHATSAPP CONFIRMATION BUTTON */}
                   <a
-                    href={`https://wa.me/918156902004?text=${encodeURIComponent(
+                    href={`https://wa.me/${whatsappNumber}?text=${encodeURIComponent(
                       `Hello! I have placed an order.\n\n*Name:* ${formData.customer_name}\n*Order ID:* ${placedOrderId}\n*Product:* ${placedOrderProductName || ''}\n*Total:* ₹${placedOrderAmount !== null ? placedOrderAmount : getFinalPrice()}\n\nPlease confirm my order. Thank you!`
                     )}`}
                     target="_blank"
@@ -426,7 +425,6 @@ export default function App() {
 
                     <h6 className="fw-bold text-uppercase text-muted small mb-2">Payment Method</h6>
 
-                    {/* ONLINE PAYMENT FIRST */}
                     <div className="card p-2 mb-2 border">
                       <div className="form-check">
                         <input className="form-check-input" type="radio" name="payment_method" id="online" value="ONLINE" checked={formData.payment_method === 'ONLINE'} onChange={handleInputChange} />
@@ -436,7 +434,6 @@ export default function App() {
                       </div>
                     </div>
 
-                    {/* CASH ON DELIVERY SECOND WITH +₹10 NOTICE */}
                     <div className="card p-2 mb-3 border">
                       <div className="form-check">
                         <input className="form-check-input" type="radio" name="payment_method" id="cod" value="COD" checked={formData.payment_method === 'COD'} onChange={handleInputChange} />
@@ -541,6 +538,25 @@ export default function App() {
         {activeTab === 'admin' && isAdminAuthenticated && <Admin />}
       </div>
 
+      {/* FLOATING WHATSAPP BUTTON */}
+      <a
+        href={whatsappUrl}
+        target="_blank"
+        rel="noopener noreferrer"
+        className="position-fixed btn btn-success rounded-circle shadow-lg d-flex align-items-center justify-content-center"
+        style={{
+          bottom: '20px',
+          right: '20px',
+          width: '56px',
+          height: '56px',
+          zIndex: 1050,
+          fontSize: '28px'
+        }}
+        title="Chat with us on WhatsApp"
+      >
+        💬
+      </a>
+
       {/* ADMIN PIN VERIFICATION MODAL */}
       {showPinModal && (
         <div className="modal show d-block tab-modal" style={{ backgroundColor: 'rgba(0,0,0,0.5)' }}>
@@ -580,3 +596,4 @@ export default function App() {
     </div>
   );
 }
+

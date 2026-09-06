@@ -69,16 +69,24 @@ export default function ProductReviews({ selectedProduct, currentReviewData }) {
     <div>
       <h5 className="fw-bold mb-3">Customer Reviews for {selectedProduct.name} ({currentReviewData.count})</h5>
       <div className="d-flex flex-column gap-3">
-        {currentReviewData.reviews.map((rev) => (
-          <div key={rev.id} className="p-3 bg-light rounded border">
-            <div className="d-flex justify-content-between align-items-center mb-1">
-              <strong className="small">{rev.name}</strong>
-              <span className="text-muted fs-7">{rev.date}</span>
+        {currentReviewData.reviews.map((rev) => {
+          const displayName = (
+            rev.name || rev.fullName || rev.full_name || rev.author || rev.reviewer || rev.customer_name || rev.customer || rev.username || rev.title || 'Anonymous'
+          );
+          const rating = Number(rev.rating ?? rev.rate ?? rev.stars ?? rev.score) || 5;
+          const comment = rev.comment || rev.review || rev.text || rev.body || '';
+
+          return (
+            <div key={rev.id} className="p-3 bg-light rounded border">
+              <div className="d-flex justify-content-between align-items-center mb-1">
+                <strong className="small">{displayName}</strong>
+                <span className="text-muted fs-7">{rev.date}</span>
+              </div>
+              <div className="text-warning small mb-1">{'★'.repeat(rating)}{'☆'.repeat(5 - rating)}</div>
+              <p className="m-0 text-dark small">{comment}</p>
             </div>
-            <div className="text-warning small mb-1">{'★'.repeat(rev.rating)}{'☆'.repeat(5 - rev.rating)}</div>
-            <p className="m-0 text-dark small">{rev.comment}</p>
-          </div>
-        ))}
+          );
+        })}
       </div>
     </div>
   );

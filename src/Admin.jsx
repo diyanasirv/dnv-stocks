@@ -236,17 +236,50 @@ export default function Admin() {
     const trimmed = text.trim();
     if (!trimmed) return out;
 
-    // Try JSON first
+    // Try JSON first (accept and attempt to clean common malformations)
     try {
-      const parsed = JSON.parse(trimmed);
+      // attempt parse as-is first
+      let parsed = null;
+      try {
+        parsed = JSON.parse(trimmed);
+      } catch (jerr) {
+        // try a cleaned-up version: remove trailing commas and fix unmatched braces/brackets
+        let cleaned = trimmed.replace(/,(\s*[\]\}])/g, '$1');
+        const openBraces = (cleaned.match(/{/g) || []).length;
+        const closeBraces = (cleaned.match(/}/g) || []).length;
+        const openBrackets = (cleaned.match(/\[/g) || []).length;
+        const closeBrackets = (cleaned.match(/\]/g) || []).length;
+        if (openBraces > closeBraces) {
+          const missing = openBraces - closeBraces;
+          const insertPos = cleaned.lastIndexOf(']') !== -1 ? cleaned.lastIndexOf(']') : cleaned.length;
+          cleaned = cleaned.slice(0, insertPos) + '}'.repeat(missing) + cleaned.slice(insertPos);
+        }
+        if (openBrackets > closeBrackets) {
+          const missing = openBrackets - closeBrackets;
+          cleaned = cleaned + ']'.repeat(missing);
+        }
+
+        try {
+          parsed = JSON.parse(cleaned);
+        } catch (e) {
+          parsed = null;
+        }
+      }
+
       if (Array.isArray(parsed)) {
         parsed.forEach((r, i) => {
-          if (r && (r.name || r.comment || r.review || r.author || r.customer_name)) {
-            const name = (r.name || r.fullName || r.full_name || r.author || r.reviewer || r.customer_name || r.customer || r.username || r.title || '').toString().trim();
+          if (r && (r.name || r.comment || r.review || r.author || r.customer_name || r.text || r.body)) {
+            let name = (r.name || r.fullName || r.full_name || r.author || r.reviewer || r.customer_name || r.customer || r.username || r.title || '').toString().trim();
             const rating = Number(r.rating ?? r.rate ?? r.stars ?? r.score) || 5;
             const comment = (r.comment || r.review || r.text || r.body || '').toString().trim();
             const date = (r.date || r.created_at || r.time || '').toString().trim();
-            out.push({ id: r.id || `${Date.now()}-${i}`, name, rating, comment, date });
+            // ensure name is not empty: fallback to comment excerpt
+            if (!name) {
+              const excerpt = comment ? (comment.substring(0, 24) + (comment.length > 24 ? '...' : '')) : '';
+              name = excerpt || 'Anonymous';
+            }
+            const id = r.id || `${Date.now()}-${i}`;
+            out.push({ id, name, rating, comment, date });
           }
         });
         return out;
@@ -264,15 +297,24 @@ export default function Admin() {
       else parts = line.split(/\s{2,}/); // split on two+ spaces
 
       if (parts.length >= 4) {
-        const name = parts[0].trim();
+        let name = parts[0].trim();
         const rating = Number(parts[1].trim()) || 5;
         const comment = parts[2].trim();
         const date = parts.slice(3).join('|').trim();
+        if (!name) {
+          const excerpt = comment ? (comment.substring(0, 24) + (comment.length > 24 ? '...' : '')) : '';
+          name = excerpt || 'Anonymous';
+        }
         out.push({ id: `${Date.now()}-${idx}`, name, rating, comment, date });
       } else if (parts.length === 3) {
-        const [name, ratingOrComment, maybeDate] = parts.map(p => p.trim());
+        let [name, ratingOrComment, maybeDate] = parts.map(p => p.trim());
         const rating = Number(ratingOrComment) || 5;
-        out.push({ id: `${Date.now()}-${idx}`, name, rating, comment: maybeDate, date: '' });
+        const comment = maybeDate || '';
+        if (!name) {
+          const excerpt = comment ? (comment.substring(0, 24) + (comment.length > 24 ? '...' : '')) : '';
+          name = excerpt || 'Anonymous';
+        }
+        out.push({ id: `${Date.now()}-${idx}`, name, rating, comment, date: '' });
       } else {
         // fallback: try to extract rating as a digit in the line
         const m = line.match(/(\d)\s*$/);

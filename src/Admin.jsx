@@ -23,8 +23,7 @@ export default function Admin() {
   const [imageFile, setImageFile] = useState(null); // NEW: State for file upload
   const [editingProductId, setEditingProductId] = useState(null);
   const [savingProduct, setSavingProduct] = useState(false);
-  // Reviews input for product form (stored locally per product)
-  const [reviewsInput, setReviewsInput] = useState('');
+  // Reviews are managed via server-side import; Admin UI no longer accepts pasted reviews.
 
   const STATUS_OPTIONS = ['Order placed', 'Order confirmed', 'Item Packed', 'Shipped', 'Out for Delivery', 'Delivered', 'Cancelled'];
 
@@ -177,7 +176,6 @@ export default function Admin() {
       setEditingProductId(null);
       setImageFile(null);
       setProductForm({ name: '', price: '', description: '', image: '' });
-      setReviewsInput('');
       fetchProducts();
     } catch (err) {
       alert('Error saving product: ' + err.message);
@@ -195,20 +193,7 @@ export default function Admin() {
       description: prod.description || '',
       image: prod.image || ''
     });
-    // Load saved reviews for this product from Supabase into the edit textarea
-    (async () => {
-      try {
-        const { data, error } = await supabase.from('product_reviews').select('reviews').eq('product_id', prod.id).single();
-        if (!error && data && Array.isArray(data.reviews)) {
-          // show as pretty JSON for editing
-          setReviewsInput(JSON.stringify(data.reviews, null, 2));
-        } else {
-          setReviewsInput('');
-        }
-      } catch (err) {
-        setReviewsInput('');
-      }
-    })();
+    // Reviews are managed via server-side import; no client-side reviews textarea is shown.
   };
 
   const handleDeleteProduct = async (productId) => {
@@ -226,7 +211,6 @@ export default function Admin() {
     setEditingProductId(null);
     setImageFile(null);
     setProductForm({ name: '', price: '', description: '', image: '' });
-    setReviewsInput('');
   };
 
   // --- Reviews helper (parser used by product create/update) ---
@@ -555,47 +539,8 @@ export default function Admin() {
                   </div>
 
                   <div className="mb-3">
-                    <label className="form-label small fw-semibold mb-1">Product Reviews (optional)</label>
-                    <textarea
-                      name="product_reviews"
-                      className="form-control form-control-sm"
-                      rows={4}
-                      placeholder={'Paste JSON array or lines (name | rating | comment | date) — saved to localStorage for this product'}
-                      value={reviewsInput}
-                      onChange={(e) => setReviewsInput(e.target.value)}
-                    ></textarea>
-                    <div className="form-text small text-muted">This will be saved locally for the product and shown on the product page. Use JSON or delimited lines.</div>
-                    {/* Live preview of parsed reviews (shows how names will appear) */}
-                    {reviewsInput && (() => {
-                      try {
-                        const parsedPreview = parseReviewsInput(reviewsInput);
-                        if (parsedPreview.length > 0) {
-                          return (
-                            <div className="mt-2">
-                              <div className="small fw-bold mb-1">Preview ({parsedPreview.length})</div>
-                              <div className="d-flex flex-column gap-2">
-                                {parsedPreview.slice(0, 10).map((r) => (
-                                  <div key={r.id} className="p-2 bg-white border rounded small">
-                                    <div className="d-flex justify-content-between align-items-center mb-1">
-                                      <strong className="text-dark">{r.name}</strong>
-                                      <span className="text-muted">{r.date}</span>
-                                    </div>
-                                    <div className="text-warning mb-1">{'★'.repeat(r.rating)}{'☆'.repeat(5 - r.rating)}</div>
-                                    <div className="text-muted">{r.comment}</div>
-                                  </div>
-                                ))}
-                                {parsedPreview.length > 10 && (
-                                  <div className="text-muted small">...showing 10 of {parsedPreview.length} reviews</div>
-                                )}
-                              </div>
-                            </div>
-                          );
-                        }
-                      } catch (e) {
-                        return null;
-                      }
-                      return null;
-                    })()}
+                    <label className="form-label small fw-semibold mb-1">Product Reviews</label>
+                    <div className="form-text small text-muted">Bulk reviews are imported via server-side code. To add 1000+ reviews, use a script (see <strong>tools/uploadReviews.js</strong>) or run a migration using the Supabase service role key.</div>
                   </div>
 
                   <div className="d-flex gap-2">

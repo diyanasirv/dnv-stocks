@@ -1,4 +1,5 @@
 import React from 'react';
+import { LOCAL_REVIEWS } from './reviews_local';
 
 export const PRODUCT_SPECIFIC_REVIEWS = {
   egg_boiler: [
@@ -45,6 +46,30 @@ export function getReviewData(product) {
     }
   } catch (e) {
     // ignore parse errors and fall back to defaults
+  }
+
+  // Next prefer local file mapping (edit src/reviews_local.js in VS Code)
+  try {
+    if (LOCAL_REVIEWS) {
+      // by product id
+      if (product.id && LOCAL_REVIEWS[product.id]) {
+        const reviews = LOCAL_REVIEWS[product.id];
+        const count = reviews.length;
+        const avgRating = (reviews.reduce((acc, r) => acc + (Number(r.rating) || 0), 0) / (count || 1)).toFixed(1);
+        return { reviews, count, avgRating };
+      }
+
+      // by normalized name key
+      const key = (product.name || '').toLowerCase().replace(/[^a-z0-9]+/g, '_').replace(/^_|_$/g, '');
+      if (key && LOCAL_REVIEWS[key]) {
+        const reviews = LOCAL_REVIEWS[key];
+        const count = reviews.length;
+        const avgRating = (reviews.reduce((acc, r) => acc + (Number(r.rating) || 0), 0) / (count || 1)).toFixed(1);
+        return { reviews, count, avgRating };
+      }
+    }
+  } catch (e) {
+    // ignore
   }
 
   let reviews = DEFAULT_REVIEWS;

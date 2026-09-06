@@ -720,7 +720,7 @@ export const LOCAL_REVIEWS = {
 
       ],
       
-      mixer_grinder": [
+  "mixer_grinder": [
     { id: 'mg-3001', name: 'Priya', rating: 5, comment: 'Powerful motor, grinds chutney perfectly.', date: '2026-09-03' },
     { id: 'mg-3002', name: 'Ajay', rating: 4, comment: 'Good performance but noisy on high speed.', date: '2026-08-25' },
     { id: 'mg-3003', name: 'Farah', rating: 5, comment: 'Very durable and easy to clean.', date: '2026-08-10' },
